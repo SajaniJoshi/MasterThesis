@@ -7,14 +7,14 @@ class GeoTiffMetadata():
         self.bounds = src.bounds  # Bounding box
         self.image = img
     
-    def getMetadata(currentMetadata, prediction_to_save): # Extract metadata from currentMetadata
+    def getMetadata(self, prediction_to_save): # Extract metadata from currentMetadata
         metadata = {
                 "driver": "GTiff",
-                "height": currentMetadata.shape[0],
-                "width": currentMetadata.shape[1],
+                "height": self.shape[0],
+                "width": self.shape[1],
                 "count": 1,
                 "dtype": prediction_to_save.dtype.name,
-                "crs": currentMetadata.crs,
-                "transform": currentMetadata.transform,
+                "crs": self.crs,
+                "transform": self.transform,
                 }
         return metadata
