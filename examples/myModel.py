@@ -1,6 +1,7 @@
 from mxnet.lr_scheduler import LRScheduler
 from decode.FracTAL_ResUNet.models.semanticsegmentation.FracTAL_ResUNet import FracTAL_ResUNet_cmtsk
 
+#Default train params and initialize FracTAL_ResUNet_cmtsk
 class MyFractalResUNetcmtsk():
     def __init__(self, isLoad, path, ctx, nfilters_init, depth, num_classes):
         self.net = FracTAL_ResUNet_cmtsk(nfilters_init, depth, num_classes)
