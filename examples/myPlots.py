@@ -1,5 +1,8 @@
 import os
+import rasterio
+import numpy as np
 import matplotlib.pyplot as plt
+result_path = r"D:\Source\Test\data\Output\Fractal\Result"
 
 def lossPlot(train_losses, loss_path_plot):
     plt.figure(figsize=(10, 5))
@@ -44,3 +47,25 @@ def visualize_segmentation(id, segmented_image, result_path):
     path=  os.path.join(result_path, f"{id}_prism.tiff")
     #fig.savefig(path)
     #plt.close(fig)
+
+def writePredictionImage(id, name, pre_img, orignalMeta):
+   path=  os.path.join(result_path, f"{id}_{name}.tif")
+   meta = orignalMeta.getMetadata(pre_img)
+   with rasterio.open(path, "w", **meta) as dst:
+                dst.write(pre_img, 1)  # Write to band 1
+    
+def visualize_all(id, img, currentMetadata, outputs, pred_segm, pred_bound, inst): 
+    pred_dists = outputs[2][0,1,:,:].asnumpy() 
+    writePredictionImage(id, "extend", pred_segm, currentMetadata)
+    writePredictionImage(id, "boundary", pred_bound, currentMetadata)
+    writePredictionImage(id, "distance", pred_dists, currentMetadata)
+    if img.ndim == 4 and img.shape[0] == 1:  
+        abc = img[0]  # Remove batch dimension
+    if abc.ndim == 3 and abc.shape[0] >= 3:  # RGB or multi-channel image
+        rgb_image = np.transpose(abc[:3], (1, 2, 0))
+             
+    rgb_image = (rgb_image - rgb_image.min()) / (rgb_image.max() - rgb_image.min())
+    rgb_image = (rgb_image * 255).astype(np.uint8)  # Convert to uint8
+    if rgb_image.ndim == 3 and rgb_image.shape[0] == 3:
+        rgb_image = np.transpose(rgb_image, (1, 2, 0))  # Convert from (3, H, W) to (H, W, 3)  
+    plotAll(id, rgb_image.asnumpy(), pred_segm, pred_bound, pred_dists, inst)
