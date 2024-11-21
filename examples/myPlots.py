@@ -13,17 +13,26 @@ def lossPlot(train_losses, loss_path_plot):
     plt.show()
     
 def plotAll(id, originalimage, pred_segm, pred_bound, pred_dists, instanceSegment):
-    fig, ax =plt.subplots(1,5, figsize=(30,30))
-    ax[0].imshow(originalimage)
-    ax[1].imshow(pred_segm)
-    ax[2].imshow(pred_bound)
-    ax[3].imshow(pred_dists)
-    ax[4].imshow(instanceSegment, cmap=plt.get_cmap('prism'), interpolation=None)
-    ax[4].set_title(f'Instance Segmentation {id}')
-    ax[0].set_title(f'Original {id}')
-    ax[1].set_title(f'Extent Mask {id}')
-    ax[2].set_title(f'Boundary Mask {id}')
-    ax[3].set_title(f'Distance Mask {id}')
+    path=  os.path.join("D:\Source\Test\data\Output\Fractal\Result", f"{id}_all.tiff")
+    print(path)
+    try:
+        fig, ax =plt.subplots(1,5, figsize=(30,30))
+        ax[0].imshow(originalimage)
+        ax[1].imshow(pred_segm)
+        ax[2].imshow(pred_bound)
+        ax[3].imshow(pred_dists)
+        ax[4].imshow(instanceSegment, cmap=plt.get_cmap('prism'), interpolation=None)
+        ax[4].set_title(f'Instance Segmentation {id}')
+        ax[0].set_title(f'Original {id}')
+        ax[1].set_title(f'Extent Mask {id}')
+        ax[2].set_title(f'Boundary Mask {id}')
+        ax[3].set_title(f'Distance Mask {id}')
+        
+        print("I am here")
+        fig.savefig(path)
+        plt.close(fig)
+    except Exception as e:
+        print(f"Error in plotAll: {e}")
     
 def visualize_segmentation(id, segmented_image, result_path):
     """
@@ -39,4 +48,5 @@ def visualize_segmentation(id, segmented_image, result_path):
     ax.imshow(segmented_image, cmap=plt.get_cmap('prism'), interpolation=None)
     ax.set_title('Instance Segmentation')
     path=  os.path.join(result_path, f"{id}_prism.tiff")
-    plt.savefig(path)
+    fig.savefig(path)
+    plt.close(fig)
