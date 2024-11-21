@@ -66,6 +66,45 @@ class ComputeIou():
                 iou = self.compute_iou_safe(pred_polygon, gt_polygon)
                 iou_results.append((pred_polygon, gt_polygon, iou))
         return iou_results
+    
+    def evaluate_segmentation_from_iou(self, iou_results, iou_threshold=0.5):
+        """
+            Returns:
+            precision: Precision score.
+            recall: Recall score.
+            f1_score: F1 score.
+        """
+        matched_gt = set()  # Keeps track of matched ground-truth polygons
+        tp = 0  # True Positives
+        fp = 0  # False Positives
+        fn = 0  # False Negatives
+
+        # Extract all unique ground-truth polygons for FN calculation
+        all_gt_polygons = {id(gt_polygon) for _, gt_polygon, _ in iou_results}
+        fn = len(all_gt_polygons)  # Initialize FN as the total number of ground-truth polygons
+
+        # Iterate through IoU results to determine matches
+        for pred_polygon, gt_polygon, iou in iou_results:
+            if iou >= iou_threshold:
+                gt_id = id(gt_polygon)
+                if gt_id not in matched_gt:
+                    tp += 1  # True Positive
+                    matched_gt.add(gt_id)  # Mark this GT as matched
+                    fn -= 1  # Decrease FN since this GT is matched
+                else:
+                    fp += 1  # Predicted polygon matches an already matched GT
+
+        # Calculate FP from unmatched predictions
+        unmatched_predictions = len({id(pred_polygon) for pred_polygon, _, _ in iou_results}) - tp
+        fp += unmatched_predictions
+
+        # Calculate metrics
+        precision = tp / (tp + fp) if (tp + fp) > 0 else 0
+        recall = tp / (tp + fn) if (tp + fn) > 0 else 0
+        f1_score = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0
+
+        return precision, recall, f1_score
+
         
              
 
