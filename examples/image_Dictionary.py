@@ -41,6 +41,7 @@ class ImageDict:
         """
         image_dict = {}
         try:
+            count = 0
             for filename in os.listdir(self.directory):  # Use the instance variable 'directory'
                 if filename.endswith(".tif"):
                     file_path = os.path.join(self.directory, filename)
@@ -62,11 +63,16 @@ class ImageDict:
                             # Add to dictionary based on mask status or filename condition
                             if self.isMask or 'VNIR' in filename:
                                 image_dict[id] = metadata
+                                count += 1
+                            if count == 5:
+                                break
+        
+
         except Exception as e:
             print(f"Error loading TIFF files: {e}")
         return image_dict
 
-    def getImage(self, id, image_dict):
+    def getImage(self, id, image_dict, ctx):
         """
         Retrieve an image by ID from the image dictionary.
 
@@ -78,7 +84,7 @@ class ImageDict:
             img = nd.array(image_dict[id].image)  # Convert to MXNet NDArray
             if img.ndim == 3:
                 img = img.expand_dims(axis=0)  # Resulting shape: (1, channels, height, width)
-                return img
+                return img.as_in_context(ctx)
             else:
                 print(f"Image with ID {id} is not 3-dimensional.")
                 return None
