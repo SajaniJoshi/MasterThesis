@@ -56,7 +56,7 @@ class ImageDict:
                                 # Scale and convert to float32 for non-mask images
                                 image = np.clip(image / 10000.0, 0, 1)
                                 image = image.astype('float32')
-
+                            
                             # Assuming GeoTiffMetadata is a defined class to handle metadata
                             metadata = GeoTiffMetadata(src, image)
                             

@@ -3,6 +3,7 @@ import csv
 import mxnet as mx
 from mxnet import autograd, nd
 from decode.FracTAL_ResUNet.nn.loss.mtsk_loss import mtsk_loss
+from decode.postprocessing.instance_segmentation import InstSegm
 from myModel import MyFractalResUNetcmtsk, ReduceLROnPlateau, LossModel
 
 
@@ -10,7 +11,7 @@ epochs = 50
 batch_size = 8
 learning_rate = 0.001
 
-num_classes = 2  
+num_classes = 2
 depth = 6
 nfilters_init = 32
 
@@ -43,9 +44,9 @@ class myTrain:
             print(f'current epoch: {epoch}')
             train_loss = 0.0     # compute training loss
             for id in self.train_ids: # NOTE: img/mask contain batches of images/lables each with the size (batch_size, H, W)
-                print(f'image_id:{id}')
-                img = self.getImage(id, self.image_dict, ctx)
-                mask = self.getImage(id, self.mask_dict, ctx)
+                print(f'image id:{id}')
+                img = self.images.getImage(id, self.image_dict, ctx)
+                mask = self.masks.getImage(id, self.mask_dict, ctx)
                 if img is None or mask is None:
                     continue
                 # forward + backward
@@ -55,28 +56,33 @@ class myTrain:
                 loss.backward()
                 trainer.step(1)
                 #using one image so it does not need step trainer.step(1) # update parameters
+                print(f'epoch {epoch} currentloss: {loss}')
                 train_loss += loss.mean().asscalar() # calculate training metrics
-                print(f'train loss: {train_loss}')
+                print(f'epoch {epoch} train_loss: {train_loss}')
             current_epoch_loss = train_loss / len(self.train_ids)  # compute overall loss
-            print(f'current epoch loss: {current_epoch_loss}')
+            print(f'epoch {epoch} current_epoch_loss: {current_epoch_loss}')
             train_losses.append(current_epoch_loss)    # now append the epoch loss
+            print(f'epoch {epoch} train_losses: {train_losses}')
+            print('----------------------------------------')
     
             # compute validation loss
             val_loss = 0.0
             for id in self.val_ids:           
-                img = self.getImage(id, self.image_dict, ctx)
-                mask = self.getImage(id, self.mask_dict, ctx)
+                img = self.images.getImage(id, self.image_dict, ctx)
+                mask = self.masks.getImage(id, self.mask_dict, ctx)
                 if img is None or mask is None:
                     continue
                 ListOfPredictions = netTrain.net(img)  # forward only
                 loss = myMTSKL.loss(ListOfPredictions, mask)  # get loss
+                print(f'epoch {epoch} validation currentloss: {loss}')
                 val_loss += loss.mean().asscalar() # calculate validation metrics
-                print(f'Val loss: {val_loss}')
+                print(f'epoch {epoch} validation val_loss: {val_loss}')
 
             # compute overall loss
             current_epoch_val_loss = val_loss/ len(self.val_ids)
-            print(f'current_epoch_val_loss: {current_epoch_val_loss}')
+            print(f'epoch {epoch} current_epoch_val_loss: {current_epoch_val_loss}')
             val_losses.append(current_epoch_val_loss)
+            print(f'epoch {epoch} val_losses: {val_losses}')
             
             reduce_lr.step(current_epoch_val_loss)  # Adjust learning rate if validation loss stagnates
     
@@ -85,46 +91,11 @@ class myTrain:
             current_model = LossModel(epoch, current_epoch_loss, current_epoch_val_loss, netTrain.net)
             model_list.append(current_model)
         
-        print('End training now')
         return loss_each_epoch, model_list
-    
-    
-    def getImage(self, id, image_dict, ctx):
-        """
-        Retrieve an image by ID from the image dictionary.
-
-        :param id: ID of the image to retrieve
-        :param image_dict: Dictionary containing images
-        :return: The image as an NDArray with shape (1, channels, height, width), or None if ID is not found
-        """
-        if id in image_dict:
-            img = nd.array(image_dict[id].image)  # Convert to MXNet NDArray
-            if img.ndim == 3:
-                img = img.expand_dims(axis=0)  # Resulting shape: (1, channels, height, width)
-                return img.as_in_context(ctx)
-            else:
-                print(f"Image with ID {id} is not 3-dimensional.")
-                return None
-        else:
-            print(f"ID {id} is not in the dictionary.")
-            return None
-        
-    def getImage(self, id, image_dict):
-        if id in image_dict:
-            img = nd.array(image_dict[id].image)  # Convert to MXNet NDArray
-            if img.ndim == 3:
-                img = img.expand_dims(axis=0)  # Resulting shape: (1, channels, height, width)
-                return img.as_in_context()
-            else:
-                print(f"Image with ID {id} is not 3-dimensional.")
-                return None
-        else:
-            print(f"ID {id} is not in the dictionary.")
-            return None
     
     def saveLosses(self, loss_each_epoch): #Write each epoch loss in CSV
         headers = ["Current Epoch", "Traing Loss", "Validation loss"]
-        with open(loss_path_csv, mode='w', newline='') as file:
+        with open(r"D:\Source\Output\Loss\loss_VNIR.csv", mode='w', newline='') as file:
             writer = csv.DictWriter(file, fieldnames=headers)
             writer.writeheader()
             writer.writerows(loss_each_epoch)
@@ -135,5 +106,4 @@ class myTrain:
             path =  os.path.join(trained_model_path, f"model_VNIR_{model.epoch}.params")
             model.net.save_parameters(path)
     
-        
         
