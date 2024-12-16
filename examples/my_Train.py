@@ -27,6 +27,7 @@ class myTrain:
         self.val_ids = val_ids
            
     def train(self, ctx): #Track epoch losses, backward with multitasking operation
+        mx.nd.waitall()
         netTrain = MyFractalResUNetcmtsk(False, "", ctx, nfilters_init= nfilters_init, depth= depth, num_classes= num_classes)
         trainer = mx.gluon.trainer.Trainer(netTrain.net.collect_params(), 'adam', {'learning_rate': learning_rate})
         reduce_lr = ReduceLROnPlateau(trainer, patience=5, factor=0.1) # Example usage inside a training loop
@@ -51,7 +52,9 @@ class myTrain:
                 with autograd.record():
                     ListOfPredictions = netTrain.net(img)
                     loss = myMTSKL.loss(ListOfPredictions, mask)
+                    print(f"Loss before backward: {loss}")
                 loss.backward()
+                print("Gradient after backward:", [param.grad().asnumpy() for param in netTrain.net.collect_params().values()])
                 trainer.step(1)
                 #using one image so it does not need step trainer.step(1) # update parameters
                 print(f'epoch {epoch} currentloss: {loss}')
