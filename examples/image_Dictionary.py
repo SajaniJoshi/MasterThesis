@@ -16,9 +16,26 @@ class ImageDict:
         """
         self.directory = directory
         self.isMask = isMask
+    
+    def validate_image(self, filename, image):
+        """
+        Validate the loaded image for common issues.
+        :param image: NumPy array representing the image
+        :return: True if valid, False otherwise
+        """
+        if image is None or image.size == 0:
+            print(f"Image is empty {filename}.")
+            return False
+        if np.any(np.isnan(image)):
+            print(f"Image contains NaN values {filename}.")
+            return False
+        if np.all(image == 0):
+            print(f"Image contains only zero values {filename}.")
+            return False
+        return True
 
-    @staticmethod
-    def extract_first_number(filename):
+    
+    def extract_first_number(self, filename):
         """
         Extract the first sequence of digits from a filename.
 
@@ -49,6 +66,16 @@ class ImageDict:
                         # Read the image as a NumPy array
                         image = src.read()
 
+                        # Validate image dimensions
+                        if len(image.shape) < 2:
+                            print(f"Invalid dimensions for image: {filename}")
+                            continue
+
+                        # Validate image contents
+                        if not self.validate_image(filename, image):
+                            print(f"Corrupted or invalid image: {filename}")
+                            continue
+
                         # Extract ID from the filename
                         id = self.extract_first_number(filename)
                         if id is not None:
@@ -64,8 +91,8 @@ class ImageDict:
                             if self.isMask or 'VNIR' in filename:
                                 image_dict[id] = metadata
                                 count += 1
-                            if count == 20:
-                                break
+                            #if count == 20:
+                                #break
       
         except Exception as e:
             print(f"Error loading TIFF files: {e}")
