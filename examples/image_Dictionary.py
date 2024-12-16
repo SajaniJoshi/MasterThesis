@@ -64,10 +64,9 @@ class ImageDict:
                             if self.isMask or 'VNIR' in filename:
                                 image_dict[id] = metadata
                                 count += 1
-                            if count == 5:
+                            if count == 20:
                                 break
-        
-
+      
         except Exception as e:
             print(f"Error loading TIFF files: {e}")
         return image_dict

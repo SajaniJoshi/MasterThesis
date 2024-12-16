@@ -8,9 +8,7 @@ from myModel import MyFractalResUNetcmtsk, ReduceLROnPlateau, LossModel
 
 
 epochs = 50
-batch_size = 8
 learning_rate = 0.001
-
 num_classes = 2
 depth = 6
 nfilters_init = 32
@@ -62,8 +60,7 @@ class myTrain:
             current_epoch_loss = train_loss / len(self.train_ids)  # compute overall loss
             print(f'epoch {epoch} current_epoch_loss: {current_epoch_loss}')
             train_losses.append(current_epoch_loss)    # now append the epoch loss
-            print(f'epoch {epoch} train_losses: {train_losses}')
-            print('----------------------------------------')
+            print('--------------------------------------------------------------')
     
             # compute validation loss
             val_loss = 0.0
@@ -82,7 +79,7 @@ class myTrain:
             current_epoch_val_loss = val_loss/ len(self.val_ids)
             print(f'epoch {epoch} current_epoch_val_loss: {current_epoch_val_loss}')
             val_losses.append(current_epoch_val_loss)
-            print(f'epoch {epoch} val_losses: {val_losses}')
+
             
             reduce_lr.step(current_epoch_val_loss)  # Adjust learning rate if validation loss stagnates
     
@@ -90,6 +87,7 @@ class myTrain:
             loss_each_epoch.append({"Current Epoch": epoch, "Traing Loss": current_epoch_loss, "Validation loss": current_epoch_val_loss})
             current_model = LossModel(epoch, current_epoch_loss, current_epoch_val_loss, netTrain.net)
             model_list.append(current_model)
+            print('****************************************************************')
         
         return loss_each_epoch, model_list
     
