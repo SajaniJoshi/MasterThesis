@@ -48,16 +48,17 @@ class myTrain:
                 mask = self.masks.getImage(id, self.mask_dict, ctx)
                 if img is None or mask is None:
                     continue
+                print(f"Image shape: {img.shape}, Mask shape: {mask.shape}")
                 # forward + backward
                 with autograd.record():
                     ListOfPredictions = netTrain.net(img)
+                    print(f"ListOfPredictions shape: {[pred.shape for pred in ListOfPredictions]}")
                     loss = myMTSKL.loss(ListOfPredictions, mask)
-                    print(f"Loss before backward: {loss}")
+                    print(f"Loss before backward: {loss.asscalar()}")
                 loss.backward()
-                print("Gradient after backward:", [param.grad().asnumpy() for param in netTrain.net.collect_params().values()])
                 trainer.step(1)
                 #using one image so it does not need step trainer.step(1) # update parameters
-                print(f'epoch {epoch} currentloss: {loss}')
+                print(f'epoch {epoch} currentloss: {loss.asscalar()}')
                 train_loss += loss.mean().asscalar() # calculate training metrics
                 print(f'epoch {epoch} train_loss: {train_loss}')
             current_epoch_loss = train_loss / len(self.train_ids)  # compute overall loss
@@ -74,7 +75,7 @@ class myTrain:
                     continue
                 ListOfPredictions = netTrain.net(img)  # forward only
                 loss = myMTSKL.loss(ListOfPredictions, mask)  # get loss
-                print(f'epoch {epoch} validation currentloss: {loss}')
+                print(f'epoch {epoch} validation currentloss: {loss.asscalar()}')
                 val_loss += loss.mean().asscalar() # calculate validation metrics
                 print(f'epoch {epoch} validation val_loss: {val_loss}')
 
