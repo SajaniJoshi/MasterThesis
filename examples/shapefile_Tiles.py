@@ -48,3 +48,6 @@ def split_shapefile_by_tiles():
         clipped.to_file(output_path)
         print(f"Saved: {output_path}")
 
+
+split_shapefile_by_tiles()
+
