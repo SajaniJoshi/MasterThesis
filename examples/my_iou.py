@@ -4,7 +4,7 @@ import numpy as np
 from shapely.geometry import box
 from rasterio.features import rasterize
 from affine import Affine
-from my_Save import saveLosses
+from my_Save import saveAsCSV
 
 def read_tiff_as_array(tiff_path):
     """Read a TIFF file and return it as a NumPy array."""
@@ -40,7 +40,7 @@ def calculate_iou(predicted_mask, ground_truth_mask):
     iou = intersection / union if union != 0 else 0
     return iou
 
-def calculate_ious(val_ids):
+def calculate_ious(val_ids, path):
     ious = []
     for id in val_ids:
         print(f'ID: {id}')
@@ -69,5 +69,5 @@ def calculate_ious(val_ids):
                 "ID": id,
                 "IOU": iou_score
             })
-    saveLosses(["ID", "IOU"], r"D:\Source\Output\Loss\IOU.csv", ious)
+    saveAsCSV(["ID", "IOU"], path, ious)
 
