@@ -50,7 +50,7 @@ class ImageDict:
             print(f"Error: No match found in '{filename}'")
             return None
 
-    def load_tif_files(self, imageDict={}):
+    def load_tif_files(self, imageDict={}, numberOfimages = 10):
         """
         Load TIFF files from the directory into a dictionary keyed by an extracted ID.
 
@@ -99,8 +99,8 @@ class ImageDict:
                             if self.isMask or 'VNIR' in filename:
                                 image_dict[id] = metadata
                                 count += 1
-                            #if count == 20:
-                                #break
+                            if count == numberOfimages:
+                                break
       
         except Exception as e:
             print(f"Error loading TIFF files: {e}")
@@ -117,7 +117,6 @@ class ImageDict:
         if id in image_dict:
             img = nd.array(image_dict[id].image)  # Convert to MXNet NDArray
             if img.ndim == 3:
-                print('i am here.')
                 print(img.shape)
                 img = img.expand_dims(axis=0)  # Resulting shape: (1, channels, height, width)
                 print(img.shape)
