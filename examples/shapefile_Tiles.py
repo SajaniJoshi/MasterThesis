@@ -42,7 +42,7 @@ def split_shapefile_by_tiles():
             continue
 
         # Save the resulting shapefile
-        tile_id = int(tile.get('id', idx) if 'id' in tile else idx)  # Use 'id' if present, otherwise index
+        tile_id = int(tile.get('ogc_fid', idx) if 'ogc_fid' in tile else idx)  # Use 'id' if present, otherwise index
         print(f'tile_id: {tile_id}')
         output_path = os.path.join(output_directory, f"tile_{tile_id}.shp")
         clipped.to_file(output_path)
