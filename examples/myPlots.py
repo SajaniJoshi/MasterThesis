@@ -105,5 +105,5 @@ def visualize_all(id, img, currentMetadata, outputs, pred_segm, pred_bound, inst
     rgb_image = (rgb_image * 255).astype(np.uint8)  # Convert to uint8
     if rgb_image.ndim == 3 and rgb_image.shape[0] == 3:
         rgb_image = np.transpose(rgb_image, (1, 2, 0))  # Convert from (3, H, W) to (H, W, 3)  
-    plotAll(id, rgb_image.asnumpy(), pred_segm, pred_bound, pred_dists, inst, result_path)
+    plotAll(id, rgb_image.asnumpy(), pred_segm, pred_bound, pred_dists, inst, output_shapefile_path)
     print(f'Complete plotting {id}')
