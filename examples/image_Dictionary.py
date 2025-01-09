@@ -117,9 +117,7 @@ class ImageDict:
         if id in image_dict:
             img = nd.array(image_dict[id].image)  # Convert to MXNet NDArray
             if img.ndim == 3:
-                print(img.shape)
                 img = img.expand_dims(axis=0)  # Resulting shape: (1, channels, height, width)
-                print(img.shape)
                 return img.as_in_context(ctx)
             else:
                 print(f"Image with ID {id} is not 3-dimensional.")
