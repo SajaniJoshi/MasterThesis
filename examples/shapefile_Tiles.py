@@ -1,13 +1,18 @@
 import os 
 import geopandas as gpd
+import const
 
 
-def split_shapefile_by_tiles():
+def split_shapefile_by_tiles(is2022):
 
     # Load the shapefiles
-    big_gdf = gpd.read_file(r"D:\Source\Input\Data\IACS\BB_Antragsdaten_2010_FBS_c1.shp")
-    tile_gdf = gpd.read_file(r"D:\Source\Input\Data\Tiles\global_tiles_dnn_ls_bb.shp")
-    output_directory = r"D:\Source\Output\IACS_2010"
+    tile_gdf = gpd.read_file(const.all_tile_path)
+    filePath = const.ref_2010
+    output_directory = const.output_ref_2010
+    if is2022:
+        filePath = const.ref_2022
+        output_directory = const.output_ref_2022
+    big_gdf = gpd.read_file(filePath)
     os.makedirs(output_directory, exist_ok=True)
 
     # Ensure both shapefiles have the same CRS
@@ -49,5 +54,4 @@ def split_shapefile_by_tiles():
         print(f"Saved: {output_path}")
 
 
-split_shapefile_by_tiles()
 

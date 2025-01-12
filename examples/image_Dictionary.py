@@ -50,7 +50,7 @@ class ImageDict:
             print(f"Error: No match found in '{filename}'")
             return None
 
-    def load_tif_files(self, imageDict={}, numberOfimages = 10):
+    def load_tif_files(self, imageType, imageDict={}, numberOfimages = 10):
         """
         Load TIFF files from the directory into a dictionary keyed by an extracted ID.
 
@@ -96,7 +96,7 @@ class ImageDict:
                             metadata = GeoTiffMetadata(src, image)
                             
                             # Add to dictionary based on mask status or filename condition
-                            if self.isMask or 'VNIR' in filename:
+                            if self.isMask or imageType in filename:
                                 image_dict[id] = metadata
                                 count += 1
                             if count == numberOfimages:

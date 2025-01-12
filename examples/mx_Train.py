@@ -6,8 +6,8 @@ from tqdm import tqdm
 from mxnet.lr_scheduler import FactorScheduler
 
 # Global Training Parameters
-epochs = 50
-initial_learning_rate  = 0.0001
+#epochs = 50
+initial_learning_rate  = 0.001
 weight_decay = 1e-4  # L2 regularization
 
 num_classes = 2
@@ -25,7 +25,7 @@ class myTrain:
         self.train_loader = train_loader
         self.val_loader = val_loader
 
-    def train(self, ctx):
+    def train(self, ctx, epochs = 50):
         mx.nd.waitall()
         # Initialize the network, trainer, scheduler, and loss function
         netTrain = MyFractalResUNetcmtsk(False, "", ctx, nfilters_init=nfilters_init, depth=depth, num_classes=num_classes)
@@ -50,7 +50,7 @@ class myTrain:
         patience_counter = 0
         final_epoch = 0
 
-        print('Start training now')
+        print('Start training now...')
         for epoch in range(epochs):  # Loop for the number of epochs
             final_epoch = epoch
 
@@ -67,14 +67,11 @@ class myTrain:
                 with autograd.record():
                     # Forward pass
                     ListOfPredictions = netTrain.net(batch_img)
-
-                    # Apply sigmoid activation to each output prediction
                     pred_segm = mx.nd.sigmoid(ListOfPredictions[0])
                     pred_bound = mx.nd.sigmoid(ListOfPredictions[1])
                     pred_dists = mx.nd.sigmoid(ListOfPredictions[2])
-
-                    # Compute loss using sigmoid-activated predictions
-                    loss = myMTSKL.loss([pred_segm, pred_bound,pred_dists], batch_mask)
+                    #[pred_segm, pred_bound,pred_dists]
+                    loss = myMTSKL.loss(ListOfPredictions, batch_mask)
 
                 loss.backward()  # Backward pass
                 trainer.step(batch_img.shape[0])  # Update parameters (batch size scaling)
@@ -86,7 +83,6 @@ class myTrain:
             current_epoch_loss = train_loss / len(self.train_loader)
             train_losses.append(current_epoch_loss)
             print(f"Training Loss: {current_epoch_loss}")
-            print('--------------------------------------------------------------')
 
             # Validate every 5 epochs
             #if epoch % 5 == 0 or epoch == epochs - 1:
@@ -99,14 +95,14 @@ class myTrain:
 
                 # Forward pass only
                 ListOfPredictions = netTrain.net(batch_img)
-
                 # Apply sigmoid activation to validation predictions
                 pred_segm = mx.nd.sigmoid(ListOfPredictions[0])
                 pred_bound = mx.nd.sigmoid(ListOfPredictions[1])
                 pred_dists = mx.nd.sigmoid(ListOfPredictions[2])
 
                 # Compute validation loss
-                loss = myMTSKL.loss([pred_segm, pred_bound,pred_dists], batch_mask)
+                #[pred_segm, pred_bound,pred_dists]
+                loss = myMTSKL.loss(ListOfPredictions, batch_mask)
                 val_loss += loss.mean().asscalar()
 
             # Average validation loss for the epoch

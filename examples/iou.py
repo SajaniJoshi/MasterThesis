@@ -40,3 +40,30 @@ def calculate_iou_2010(id, prediction, currentMetadata):
     gdf = gdf.to_crs(target_crs)   # Transform the CRS
     mask = geometry_mask(gdf.geometry, transform=currentMetadata.transform, invert=True, out_shape=currentMetadata.shape) # Create a mask from the shapefile geometries
     return calculate_iou(mask, prediction)
+
+
+
+def get_iou(mask , prediction):
+    # Load the original and predicted shapefiles
+    original_shp = gpd.read_file(mask)
+    predicted_shp = gpd.read_file(prediction)
+    # Ensure both shapefiles use the same CRS (Coordinate Reference System)
+    if original_shp.crs != predicted_shp.crs:
+        predicted_shp = predicted_shp.to_crs(original_shp.crs)
+
+    # Calculate the intersection
+    intersection = gpd.overlay(original_shp, predicted_shp, how='intersection')
+    # Calculate the union
+    union = gpd.overlay(original_shp, predicted_shp, how='union')
+
+    # Calculate areas
+    intersection_area = intersection.geometry.area.sum()
+    union_area = union.geometry.area.sum()
+
+    # Calculate IoU
+    iou = intersection_area / union_area
+
+    # Print the result
+    print(f"IoU: {iou:.4f}")
+
+    return iou

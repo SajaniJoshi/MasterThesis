@@ -107,3 +107,4 @@ def visualize_all(id, img, currentMetadata, outputs, pred_segm, pred_bound, inst
         rgb_image = np.transpose(rgb_image, (1, 2, 0))  # Convert from (3, H, W) to (H, W, 3)  
     plotAll(id, rgb_image.asnumpy(), pred_segm, pred_bound, pred_dists, inst, output_shapefile_path)
     print(f'Complete plotting {id}')
+    return output_shapefile_path
