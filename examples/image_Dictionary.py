@@ -97,6 +97,7 @@ class ImageDict:
                             
                             # Add to dictionary based on mask status or filename condition
                             if self.isMask or imageType in filename:
+                                print('input check:', filename)
                                 image_dict[id] = metadata
                                 count += 1
                             if count == numberOfimages:
