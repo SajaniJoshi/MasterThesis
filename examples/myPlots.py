@@ -44,23 +44,6 @@ def plotAll(id, originalimage, pred_segm, pred_bound, pred_dists, instanceSegmen
         plt.show()
         plt.close(fig)  # Close the figure to free up memory
         
-def visualize_segmentation(id, segmented_image, result_path):
-    """
-    Visualizes an instance-segmented image with unique labels using a color map.
-    """
-    plt.figure(figsize=(15, 15))
-    plt.imshow(segmented_image, cmap='tab20')  # 'tab20' is a colormap with 20 distinct colors
-    plt.colorbar()
-    plt.title("Instance-Segmented Image with Labels")
-    plt.show()
-    
-    fig, ax =plt.subplots(figsize=(15,15))
-    ax.imshow(segmented_image, cmap=plt.get_cmap('prism'), interpolation=None)
-    ax.set_title('Instance Segmentation')
-    path=  os.path.join(result_path, f"{id}_prism.tiff")
-    #fig.savefig(path)
-    #plt.close(fig)
-
 def writePredictionImage(id, name, pre_img, orignalMeta, result_path):
     try:
         path=  os.path.join(result_path, f"{id}_{name}.tif")
@@ -70,9 +53,8 @@ def writePredictionImage(id, name, pre_img, orignalMeta, result_path):
     except Exception as e:
         print(f"Error creating prediction image: {e}")
 
-
 def CreatePly(id,currentMetadata,inst, result_path):
-    inst = inst.astype(np.uint8)  # Use np.uint8 if values are integers in the range 0–255
+    inst = inst.astype(np.int32) 
     mask = inst > 0  # Define the mask for valid data
     polygons = []
     for geom, value in shapes(inst, mask=mask, transform=currentMetadata.transform):
