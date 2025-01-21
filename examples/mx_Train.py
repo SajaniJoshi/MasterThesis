@@ -30,7 +30,7 @@ class myTrain:
         # Initialize the network, trainer, scheduler, and loss function
         netTrain = MyFractalResUNetcmtsk(False, "", ctx, nfilters_init=nfilters_init, depth=depth, num_classes=num_classes)
         #Trainer with dynamic learning rate
-        lr_scheduler = FactorScheduler(step=10, factor=0.5)  # Reduce LR every 10 epochs
+        #lr_scheduler = FactorScheduler(step=10, factor=0.5)  # Reduce LR every 10 epochs
         #, 'lr_scheduler': lr_scheduler
         trainer = mx.gluon.Trainer(
             netTrain.net.collect_params(), 'adam', 

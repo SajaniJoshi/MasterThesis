@@ -65,6 +65,18 @@ class ImageDict:
                     with rasterio.open(file_path) as src:
                         # Read the image as a NumPy array
                         image = src.read()
+                        #print('Image Shape:', image.shape)
+                        #overall_max = np.max(image)
+                        #print("Overall maximum pixel value:", overall_max)
+                        # Max value for each channel
+                        #max_per_channel = np.max(image, axis=(0, 1))  # Reduce across height and width
+                        #print("Maximum pixel value per channel:", max_per_channel)
+
+                        #max_per_pixel = np.max(image, axis=2)  # Reduce across channels
+                        #print("Max value per pixel across channels:\n", max_per_pixel)
+
+                        #max_position = np.unravel_index(np.argmax(image), image.shape)
+                        #print("Position of the overall maximum pixel value:", max_position)
 
                         # Validate image dimensions
                         if len(image.shape) < 2:
@@ -97,7 +109,7 @@ class ImageDict:
                             
                             # Add to dictionary based on mask status or filename condition
                             if self.isMask or imageType in filename:
-                                print('input check:', filename)
+                                #print('input check:', filename)
                                 image_dict[id] = metadata
                                 count += 1
                             if count == numberOfimages:
