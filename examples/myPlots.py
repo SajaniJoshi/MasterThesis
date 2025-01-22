@@ -185,7 +185,6 @@ def plot_images_with_masks(images, results_path):
         #fig.colorbar(agreement_plot, ax=axes[i, 6], ticks=[0, 1, 2, 3], orientation='horizontal')
         # Add legend below the Agreement Mask
         if i == num_images - 1:  # Add legend only once at the bottom
-          print('i', i)
           colors = ['black', 'green', 'yellow', 'magenta']
           labels = ['Background', 'Correct Detection', 'Omission', 'Incorrect Detection']
           patches = [plt.matplotlib.patches.Patch(color=color, label=label) for color, label in zip(colors, labels)]
@@ -196,4 +195,21 @@ def plot_images_with_masks(images, results_path):
     print(results_path)
     plt.savefig(results_path, dpi=300, bbox_inches='tight')
     plt.show() 
+
+
+def plotIOUS(iou_path, outputPath):
+    #iou_path = r"D:\Source\Output\Result_2010\VNIR\99\iou.csv"
+    #iou_path= r"D:\Source\Output\Result_2022\VNIR\648\result\6614\iou.csv"
+    #r"D:\Source\Output\Result_2010\VNIR\iou_histogram_2010"
+
+    df = pd.read_csv(iou_path)
+    # Plot Histogram
+    plt.figure(figsize=(10, 6))
+    plt.hist(df['IOU'], bins=10, color='purple', alpha=0.7, edgecolor='black')
+    plt.xlabel('IoU Value')
+    plt.ylabel('Frequency')
+    plt.title('Distribution of IoU Values')
+    plt.savefig(outputPath, format='png', dpi=150)
+    # Show the plot
+    plt.show()
 
