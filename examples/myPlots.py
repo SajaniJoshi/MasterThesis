@@ -196,20 +196,32 @@ def plot_images_with_masks(images, results_path):
     plt.savefig(results_path, dpi=300, bbox_inches='tight')
     plt.show() 
 
-
 def plotIOUS(iou_path, outputPath):
-    #iou_path = r"D:\Source\Output\Result_2010\VNIR\99\iou.csv"
-    #iou_path= r"D:\Source\Output\Result_2022\VNIR\648\result\6614\iou.csv"
-    #r"D:\Source\Output\Result_2010\VNIR\iou_histogram_2010"
-
     df = pd.read_csv(iou_path)
+    iou_values= df['IOU']
+    print(iou_values)
+    bins = 10
+
     # Plot Histogram
     plt.figure(figsize=(10, 6))
-    plt.hist(df['IOU'], bins=10, color='purple', alpha=0.7, edgecolor='black')
+    counts, edges, _ = plt.hist(iou_values, bins=bins, color='purple', alpha=0.7, edgecolor='black')
+    
+    # Convert counts to percentages
+    print('Count:', counts)
+    total_counts = sum(counts)
+    print('total_counts:', total_counts)
+    percentages = (counts / total_counts) * 100
+
+    # Clear the plot and re-plot with percentages
+    plt.clf()
+    plt.bar((edges[:-1] + edges[1:]) / 2, percentages, width=np.diff(edges), color='purple', alpha=0.7, edgecolor='black')
+     
+    # Label axes and title
     plt.xlabel('IoU Value')
-    plt.ylabel('Frequency')
+    plt.ylabel('Percentage')
     plt.title('Distribution of IoU Values')
+    
+    # Save and show the plot
     plt.savefig(outputPath, format='png', dpi=150)
-    # Show the plot
     plt.show()
 
