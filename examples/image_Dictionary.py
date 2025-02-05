@@ -50,7 +50,7 @@ class ImageDict:
             print(f"Error: No match found in '{filename}'")
             return None
 
-    def load_tif_files(self, imageType, imageDict={}, numberOfimages = 10):
+    def load_tif_files(self, imageType, imageDict={}, numberOfimages = 10, isAllband= True):
         """
         Load TIFF files from the directory into a dictionary keyed by an extracted ID.
 
@@ -100,6 +100,10 @@ class ImageDict:
                                 # Scale and convert to float32 for non-mask images
                                 image = np.clip(image / 10000.0, 0, 1)
                                 image = image.astype('float32')
+                                #print('aaimage.ndim', image.ndim, image.shape)
+                                if not isAllband:
+                                    image = image[:3, :, :]
+                                    #print('image.ndim', image.ndim, image.shape)
 
                             if self.isMask:
                                 image = np.array(image)
