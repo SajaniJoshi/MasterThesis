@@ -196,7 +196,7 @@ def plot_images_with_masks(images, results_path):
     plt.savefig(results_path, dpi=300, bbox_inches='tight')
     plt.show() 
 
-def plotIOUS(iou_path, outputPath):
+def plotIOUS(iou_path, outputPath, color):
     df = pd.read_csv(iou_path)
     iou_values= df['IOU']
     print(iou_values)
@@ -204,7 +204,7 @@ def plotIOUS(iou_path, outputPath):
 
     # Plot Histogram
     plt.figure(figsize=(10, 6))
-    counts, edges, _ = plt.hist(iou_values, bins=bins, color='purple', alpha=0.7, edgecolor='black')
+    counts, edges, _ = plt.hist(iou_values, bins=bins, color= color, alpha=0.7, edgecolor='black')
     
     # Convert counts to percentages
     print('Count:', counts)
@@ -214,7 +214,7 @@ def plotIOUS(iou_path, outputPath):
 
     # Clear the plot and re-plot with percentages
     plt.clf()
-    plt.bar((edges[:-1] + edges[1:]) / 2, percentages, width=np.diff(edges), color='purple', alpha=0.7, edgecolor='black')
+    plt.bar((edges[:-1] + edges[1:]) / 2, percentages, width=np.diff(edges), color= color, alpha=0.7, edgecolor='black')
      
     # Label axes and title
     plt.xlabel('IoU Value')
@@ -224,4 +224,87 @@ def plotIOUS(iou_path, outputPath):
     # Save and show the plot
     plt.savefig(outputPath, format='png', dpi=150)
     plt.show()
+
+def getType(input):
+    method = "using all bands"
+    color = 'purple'
+    type = 'NDV'
+    year = "2022"
+    output = input.replace(".csv", ".png")
+    if '2010' in input:
+        year = '2010'
+    if 'VNIR' in input:
+        type = 'VNIR'
+        color = 'lightblue'
+    if 'NDV' in input:
+        type = 'NDV'
+        color = 'lightGreen'
+    if '_3_' in input:
+        method = "using 3 bands"
+    elif '_AUG_' in input:
+        method = "using augmentation"
+    return method, color, type, year, output
+
+mainpath = r"D:\Source\Test\IOUs"
+def joinpath(fileName):
+    return os.path.join(mainpath, fileName)
+
+
+def plotAllResults(input):
+        # Create a figure with 6 rows and 3 columns
+        fig, axes = plt.subplots(nrows=6, ncols=3, figsize=(15, 30))
+        # Increase spacing between rows
+        plt.subplots_adjust(hspace=0.8)  # Adjust vertical spacing (increase value for more space)
+        for row in range(6):
+            for col in range(3):
+                csv_path =  pd.csv_files[row][col]
+                method, color, type, year, output = getType(csv_path)
+                df = pd.read_csv(csv_path)
+                title = f"Histogram of IOU Values for \n{type} images {method} (Year: {year})"
+                if "LOSS" in csv_path:
+                    title = f"Training and Validation Loss per Epoch \nfor {type} images {method} (Year: {year})"
+                    axes[row, col].plot(df["Current Epoch"], df["Training Loss"], marker='o', linestyle='-', label="Training Loss")
+                    axes[row, col].plot(df["Current Epoch"], df["Validation Loss"], marker='s', linestyle='-', label="Validation Loss")
+                    axes[row, col].set_xlabel("Epoch")
+                    axes[row, col].set_ylabel("Loss")
+                    axes[row, col].grid(True)
+                    axes[row, col].legend()
+                elif "IOU" in csv_path:
+                    data = df["IOU"]
+                    bins = 10  # Number of bins in the histogram
+                
+                    # Calculate histogram data
+                    counts, edges = np.histogram(data, bins=bins)
+
+                    # Convert frequency to percentage
+                    percentages = counts / counts.sum() * 100
+                    max_percent = int(max(percentages))
+
+                    # Plot histogram
+                    axes[row, col].bar((edges[:-1] + edges[1:]) / 2, percentages, width=np.diff(edges), color=color, alpha=0.7, edgecolor='black')
+
+                    # Annotate bars with percentages
+                    for i in range(len(counts)):
+                        y_position = percentages[i] + 1
+                        if percentages[i] > max_percent:
+                            y_position = percentages[i] + 0.3
+                    
+                        axes[row, col].text((edges[i] + edges[i + 1]) / 2, y_position, f"{percentages[i]:.1f}%", 
+                                        ha='center', va='bottom', fontsize=8, fontweight='bold', color='black')
+
+                        axes[row, col].set_xlabel("IoU Values")
+                        axes[row, col].set_ylabel("Frequency (%)")
+                        axes[row, col].grid(axis='y', alpha=0.75)
+
+            # Set title
+            axes[row, col].set_title(title)
+
+        # Adjust layout for better spacing
+        plt.tight_layout()
+        plt.savefig(joinpath("result.png"), format='png', dpi=300)
+        plt.show()
+        # Print out bin ranges and corresponding percentages
+        for i in range(len(counts)):
+            print(f"{percentages[i]:.1f}% of samples have IOU in range {edges[i]:.2f} - {edges[i+1]:.2f}")
+           
 
