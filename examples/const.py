@@ -5,6 +5,9 @@ images_2010 = r'D:\Source\Input\Data\2010\BB\08X_Features_Multi'
 result_2022 = r"D:\Source\Output\Result_2022"
 result_2010 = r"D:\Source\Output\Result_2010"
 
+result_hp_2022 = r"D:\Source\Output\Result_hp_2022"
+result_hp_2010 = r"D:\Source\Output\Result_hp_2010"
+
 result_2022_3 = r"D:\Source\Output\Result_2022_band3"
 result_2010_3 = r"D:\Source\Output\Result_2010_band3"
 

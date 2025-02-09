@@ -4,6 +4,7 @@ from decode.FracTAL_ResUNet.nn.loss.mtsk_loss import mtsk_loss
 from myModel import MyFractalResUNetcmtsk, ReduceLROnPlateau, LossModel
 from tqdm import tqdm
 from mxnet.lr_scheduler import FactorScheduler
+import random
 
 # Global Training Parameters
 #epochs = 50
@@ -14,6 +15,12 @@ num_classes = 2
 depth = 6
 nfilters_init = 32
 early_stopping_patience = 10  # Early stopping patience
+
+
+AdamOptimizer = 'adam'
+AdamWOptimizer = "adamw"
+SGDOptimizer = "SGD"
+
 
 class myTrain:
     def __init__(self, train_loader, val_loader):
@@ -27,16 +34,12 @@ class myTrain:
 
     def train(self, ctx, epochs = 50):
         mx.nd.waitall()
-        # Initialize the network, trainer, scheduler, and loss function
+        learning_rates = [0.001, 0.0005, 0.0001]
+        weight_decays  = [1e-4, 1e-5, 1e-6]
         netTrain = MyFractalResUNetcmtsk(False, "", ctx, nfilters_init=nfilters_init, depth=depth, num_classes=num_classes)
-        #Trainer with dynamic learning rate
-        #lr_scheduler = FactorScheduler(step=10, factor=0.5)  # Reduce LR every 10 epochs
-        #, 'lr_scheduler': lr_scheduler
-        trainer = mx.gluon.Trainer(
-            netTrain.net.collect_params(), 'adam', 
-            {'learning_rate': initial_learning_rate, 'wd': weight_decay}
-        )
-        reduce_lr = ReduceLROnPlateau(trainer, patience=3, factor=0.5, min_lr=1e-6) # Learning rate scheduler
+
+       # trainer = mx.gluon.Trainer(netTrain.net.collect_params(), AdamWOptimizer, {'learning_rate': initial_learning_rate, 'wd': weight_decay} )
+        #reduce_lr = ReduceLROnPlateau(trainer, patience=3, factor=0.5, min_lr=1e-6) # Learning rate scheduler
         myMTSKL = mtsk_loss(depth=0, NClasses=num_classes)  # Loss function for multitasking operation
 
         # Track losses and models
@@ -52,8 +55,13 @@ class myTrain:
 
         print('Start training now...')
         for epoch in range(epochs):  # Loop for the number of epochs
-            final_epoch = epoch
+            lr = random.choice(learning_rates)
+            wd = random.choice(weight_decays)
+            print(f"Testing: lr={lr}, wd={wd}")
+            trainer = mx.gluon.Trainer(netTrain.net.collect_params(), AdamOptimizer, {'learning_rate': lr, 'wd': wd})
+            reduce_lr = ReduceLROnPlateau(trainer, patience=3, factor=0.5, min_lr=1e-6) # Learning rate scheduler
 
+            final_epoch = epoch
             current_lr = trainer.learning_rate
             print(f"Epoch {epoch}: Current Learning Rate = {current_lr}")
          
@@ -67,9 +75,6 @@ class myTrain:
                 with autograd.record():
                     # Forward pass
                     ListOfPredictions = netTrain.net(batch_img)
-                    pred_segm = mx.nd.sigmoid(ListOfPredictions[0])
-                    pred_bound = mx.nd.sigmoid(ListOfPredictions[1])
-                    pred_dists = mx.nd.sigmoid(ListOfPredictions[2])
                     #[pred_segm, pred_bound,pred_dists]
                     loss = myMTSKL.loss(ListOfPredictions, batch_mask)
 
@@ -92,16 +97,7 @@ class myTrain:
             for batch_img, batch_mask in tqdm(self.val_loader, desc=f"Validation Epoch {epoch}"):
                 batch_img = batch_img.as_in_context(ctx)
                 batch_mask = batch_mask.as_in_context(ctx)
-
-                # Forward pass only
                 ListOfPredictions = netTrain.net(batch_img)
-                # Apply sigmoid activation to validation predictions
-                pred_segm = mx.nd.sigmoid(ListOfPredictions[0])
-                pred_bound = mx.nd.sigmoid(ListOfPredictions[1])
-                pred_dists = mx.nd.sigmoid(ListOfPredictions[2])
-
-                # Compute validation loss
-                #[pred_segm, pred_bound,pred_dists]
                 loss = myMTSKL.loss(ListOfPredictions, batch_mask)
                 val_loss += loss.mean().asscalar()
 
@@ -111,7 +107,7 @@ class myTrain:
             print(f"Validation Loss: {current_epoch_val_loss}")
 
             # Early stopping check
-            if current_epoch_val_loss < best_val_loss- 1e-4:
+            if current_epoch_val_loss < best_val_loss:
                     best_val_loss = current_epoch_val_loss
                     patience_counter = 0  # Reset patience counter
             else:
