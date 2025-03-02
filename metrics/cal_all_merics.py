@@ -16,13 +16,12 @@ def get_results(gt_vector_path, pred_path, mask):
             raster_iou, shapefile_iou  = cal_iou_raster_shape(ground_truth_raster, predicted_raster, ground_truth_shp, predicted_shp)
             f1 = cal_f1_boundary(ground_truth_raster, predicted_raster_boundary)
             ssi= shape_similarity_index(ground_truth_raster, predicted_raster)
-            results.append({ "ID": dir,"IOU_RASTER": raster_iou, "IOU_VECTOR": shapefile_iou, "F1_BOUNDARY": f1, "Shape_Similarity_Index": ssi}) 
+            ground_truth, predicted = get_gt_pred(ground_truth_shp, predicted_shp)
+            ssi_vector = 0
+            if ground_truth is not None and predicted is not None:
+                ssi_vector = calculate_shape_similarity_index(ground_truth, predicted)
+            results.append({ "ID": dir,"IOU_RASTER": raster_iou, "IOU_VECTOR": shapefile_iou, "F1_BOUNDARY": f1, "Shape_Similarity_Index_raster": ssi, "Shape_Similarity_Index_vector": ssi_vector}) 
     return results
-    
-def save_result(gt_vector_paths, pred_path, mask, name):
-    results = get_results(gt_vector_paths, pred_path, mask)
-    csv_name = get_csv_name(pred_path, name)
-    saveAsCSV(["ID", "IOU_RASTER", "IOU_VECTOR", "F1_BOUNDARY", "Shape_Similarity_Index"], csv_name, results)
     
 def save_result_2022():
     mask_2022 = r"D:\Source\Input\Data\2022\BB\XX_Reference_Masks_ResUNetA"
@@ -35,8 +34,11 @@ def save_result_2022():
     pred_path_vnir_hp_2022= r"E:\Master_Chemnitz\Output\Result_hp_2022\VNIR\648\result"
     pred_path_vnir_cut_mix_2022= r"E:\Master_Chemnitz\Output\Result_mix_cut_2022\VNIR\648\result"
 
-    for pred in  [pred_path_vnir_all_2022,  pred_path_ndv_all_2022, pred_path_vnir_band3_2022,  pred_path_ndv_band3_2022, pred_path_vnir_aug_2022,pred_path_vnir_hp_2022,  pred_path_vnir_cut_mix_2022]:
-        save_result(gt_vector_path, pred, mask_2022, "R2022_iou")
+    for file_2022 in [pred_path_vnir_all_2022,  pred_path_ndv_all_2022, pred_path_vnir_band3_2022,  pred_path_ndv_band3_2022, pred_path_vnir_aug_2022,pred_path_vnir_hp_2022,  pred_path_vnir_cut_mix_2022]:
+        csv_name = get_csv_name(file_2022, "Result")
+        path = os.path.join(r"D:\Source\Test\MasterThesis\metrics\res_2022", csv_name)
+        results = get_results(gt_vector_path, file_2022, mask_2022)
+        saveAsCSV(["ID", "IOU_RASTER", "IOU_VECTOR", "F1_BOUNDARY", "Shape_Similarity_Index_raster", "Shape_Similarity_Index_vector"], path, results)
         
 
 def get_results_2010( gt_vector_path_2010, file_2010):

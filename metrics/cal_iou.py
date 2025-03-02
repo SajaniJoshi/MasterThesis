@@ -1,8 +1,7 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from skimage.morphology import  disk, dilation
 import geopandas as gpd
-from common import binarize, load_raster_mask, clean_prediction, smooth_mask
+from common import binarize, load_raster_mask, clean_prediction, smooth_mask, get_gt_pred
 
 def compute_raster_iou(pred_mask, gt_mask, dilation_size=2):
     """Compute IoU for raster-based masks, applying slight dilation."""
@@ -43,7 +42,8 @@ def cal_iou_raster_shape(ground_truth_raster, predicted_raster, ground_truth_shp
     predicted_mask = clean_prediction(predicted_mask) # Apply Post-processing (Cleaning & Smoothing)
     predicted_mask = smooth_mask(predicted_mask)
     raster_iou = compute_raster_iou(predicted_mask, ground_truth_mask) # Compute IoU (Raster-based)
-    shapefile_iou = compute_shapefile_iou(ground_truth_shp, predicted_shp) # Compute IoU (Shapefile-based)
+    ground_truth_shp, predicted_shp = get_gt_pred(ground_truth_shp, predicted_shp)
+    shapefile_iou, intersection_area = compute_shapefile_iou(ground_truth_shp, predicted_shp) # Compute IoU (Shapefile-based)
     print(f"Raster-based IoU (Pixel-wise): {raster_iou:.4f}")
     print(f"Vector-based IoU (Pixel-wise): {shapefile_iou:.4f}")
     return raster_iou, shapefile_iou
