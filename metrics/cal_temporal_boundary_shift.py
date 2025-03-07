@@ -28,20 +28,21 @@ def temporal_boundary_shift(pred_2010, pred_2022):
 
     return max(dist_2010_to_2022, dist_2022_to_2010)  # Return symmetric Hausdorff Distance
 
-
 def compute_temporal_boundary_shift(pred_2010_file, pred_2022_file):
     tbs_result = []
     pred_2010_dirs = {dir: root for root, dirs, _ in os.walk(pred_2010_file) for dir in dirs} # Pre-index 2010 directories for fast lookup
     for root, dirs, files in os.walk(pred_2022_file):
         for dir in dirs:
             path_2022 = os.path.join(root, dir, f"{dir}_boundary.tif")
-            if dir in pred_2010_dirs:
-                path_2010 = os.path.join(pred_2010_dirs[dir], dir, f"{dir}_boundary.tif")
-                if os.path.exists(path_2022) and os.path.exists(path_2010):
-                    boundary_2022 = load_raster_mask(path_2022, channel=0)
-                    boundary_2010 = load_raster_mask(path_2010, channel=0)
-                    tbs = temporal_boundary_shift(boundary_2010, boundary_2022)   # Corrected function call (Replace with actual processing function)
-                    tbs_result.append({"ID": dir, "TEMPORAL_BOUNDARY_SHIFT": tbs})
+            if os.path.exists(path_2022):
+                if dir in pred_2010_dirs:
+                    path_2010 = os.path.join(pred_2010_dirs[dir], dir, f"{dir}_boundary.tif")
+                    if os.path.exists(path_2022) and os.path.exists(path_2010):
+                        boundary_2022 = load_raster_mask(path_2022, channel=0)
+                        boundary_2010 = load_raster_mask(path_2010, channel=0)
+                        tbs = temporal_boundary_shift(boundary_2010, boundary_2022)   # Corrected function call (Replace with actual processing function)
+                        print(f"TEMPORAL_BOUNDARY_SHIFT for {dir}: {tbs}")
+                        tbs_result.append({"ID": dir, "TEMPORAL_BOUNDARY_SHIFT": tbs})
     return tbs_result
 
       
@@ -72,7 +73,7 @@ def compute_temporal_boundary_shifts():
                  (pred_2010_ndv_band3_file, pred_2022_ndv_band3_file),(pred_2010_vnir_aug_file, pred_2022_vnir_aug_file),
                  (pred_2010_vnir_hp_file, pred_2022_vnir_hp_file), (pred_2010_vnir_mix_cut_file, pred_2022_vnir_mix_cut_file)
                  ]
-    for pred2010, pred2022 in pred_2010_2022:
+    for pred2010, pred2022 in pred_2010_2022: #[(pred_2010_file, pred_2022_file)]:
         tbs_result = compute_temporal_boundary_shift(pred2010, pred2022)
         csv_name = get_csv_name(pred2010, 'tbs')
         outputPath = os.path.join(r"D:\Source\Test\MasterThesis\metrics\res_2010", csv_name)

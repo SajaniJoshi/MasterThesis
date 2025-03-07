@@ -87,7 +87,7 @@ def get_ori_pred_img(id, oriPath, maskPath, predPath, is2022):
 def get_ori_pred(idsList, is2022):
     oriPath = rf"D:\Source\Input\Data\2022\BB\08X_Features_Multi"
     maskPath = r"D:\Source\Input\Data\2022\BB\XX_Reference_Masks_ResUNetA"
-    predPath = r"E:\Master_Chemnitz\Output\Result_2022\VNIR\648\result"
+    predPath = r"E:\Master_Chemnitz\Output\Result_mix_cut_2022\VNIR\648\result"
     if not is2022:
         oriPath = r"D:\Source\Input\Data\2010\BB\08X_Features_Multi"
         predPath = r"E:\Master_Chemnitz\Output\Result_2010\VNIR"
@@ -101,9 +101,9 @@ def get_ori_perd_2022_2010(idsList):
     for id in idsList:
         oriPath = rf"D:\Source\Input\Data\2022\BB\08X_Features_Multi"
         maskPath = r"D:\Source\Input\Data\2022\BB\XX_Reference_Masks_ResUNetA"
-        predPath = r"E:\Master_Chemnitz\Output\Result_2022\VNIR\648\result"
+        predPath = r"E:\Master_Chemnitz\Output\Result_mix_cut_2022\VNIR\648\result"
         oriPath_2010 = r"D:\Source\Input\Data\2010\BB\08X_Features_Multi"
-        predPath_2010 = r"E:\Master_Chemnitz\Output\Result_2010\VNIR"
+        predPath_2010 = r"E:\Master_Chemnitz\Output\Result_mix_cut_2010\VNIR"
         results.append(get_ori_pred_img(id,oriPath, maskPath, predPath, True))
         results.append(get_ori_pred_img(id,oriPath_2010, "", predPath_2010, False))
     return results

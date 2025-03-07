@@ -17,7 +17,7 @@ def preprocess_boundary(binary_image, dilate_size=1):
 
     return edges_dilated > 0  # Convert to boolean mask
 
-def compute_f1_score(ground_truth_path, prediction_path):
+def compute_f1_boundary_score(ground_truth_path, prediction_path):
     """Compute the F1-score for boundary matching."""
 
     # Ensure binary format
@@ -40,7 +40,7 @@ def compute_f1_score(ground_truth_path, prediction_path):
 def cal_f1_boundary(ground_truth_raster, predicted_raster_boundary):
     ground_truth_boundary= load_raster_mask(ground_truth_raster, channel=3)
     predicted_raster_boundary= load_raster_mask(predicted_raster_boundary, channel=0)
-    return compute_f1_score(ground_truth_boundary, predicted_raster_boundary)
+    return compute_f1_boundary_score()(ground_truth_boundary, predicted_raster_boundary)
 
 def calculate_f1_shp(ground_truth, predicted, intersection_area):
     ground_truth['class'] = 1

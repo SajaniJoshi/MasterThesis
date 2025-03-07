@@ -115,8 +115,7 @@ def get_gt_pred(ground_truth_shp, predicted_shp):
 
         if predicted.crs != ground_truth.crs:
             predicted = predicted.to_crs(ground_truth.crs)
-            return ground_truth, predicted
-    return None, None
+        return ground_truth, predicted
 
 def get_res_path(main_path, year):
     path_NDV_all = os.path.join(main_path, f"Result_NDV_all_{year}.csv") 
@@ -133,6 +132,16 @@ def get_csv_paths(year):
         path_NDV_all, path_NDV_band3, path_VNIR_all, path_VNIR_aug, path_VNIR_band3, path_VNIR_hp, path_VNIR_mix_cut = get_res_path(r"D:\Source\Test\MasterThesis\metrics\res_2022","2022")
     elif year == "2010":
         path_NDV_all, path_NDV_band3, path_VNIR_all, path_VNIR_aug, path_VNIR_band3, path_VNIR_hp, path_VNIR_mix_cut = get_res_path(r"D:\Source\Test\MasterThesis\metrics\res_2010","2010")
+    return path_NDV_all, path_NDV_band3, path_VNIR_all, path_VNIR_aug, path_VNIR_band3, path_VNIR_hp, path_VNIR_mix_cut
+
+def get_tbs_path(main_path, year):
+    path_NDV_all = os.path.join(main_path, f"tbs_NDV_all_{year}.csv") 
+    path_NDV_band3= os.path.join(main_path, f"tbs_NDV_band3_{year}.csv")
+    path_VNIR_all= os.path.join(main_path, f"tbs_VNIR_all_{year}.csv")
+    path_VNIR_aug= os.path.join(main_path, f"tbs_VNIR_aug_{year}.csv")
+    path_VNIR_band3= os.path.join(main_path, f"tbs_VNIR_band3_{year}.csv")
+    path_VNIR_hp= os.path.join(main_path, f"tbs_VNIR_hp_{year}.csv")
+    path_VNIR_mix_cut= os.path.join(main_path,f"tbs_VNIR_mix_cut_{year}.csv")
     return path_NDV_all, path_NDV_band3, path_VNIR_all, path_VNIR_aug, path_VNIR_band3, path_VNIR_hp, path_VNIR_mix_cut
     
 
