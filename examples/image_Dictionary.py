@@ -50,7 +50,7 @@ class ImageDict:
             print(f"Error: No match found in '{filename}'")
             return None
 
-    def load_tif_files(self):
+    def load_tif_files(self, imageType, imageDict={}, numberOfimages = 10, isAllband= True):
         """
         Load TIFF files from the directory into a dictionary keyed by an extracted ID.
 
@@ -65,6 +65,18 @@ class ImageDict:
                     with rasterio.open(file_path) as src:
                         # Read the image as a NumPy array
                         image = src.read()
+                        #print('Image Shape:', image.shape)
+                        #overall_max = np.max(image)
+                        #print("Overall maximum pixel value:", overall_max)
+                        # Max value for each channel
+                        #max_per_channel = np.max(image, axis=(0, 1))  # Reduce across height and width
+                        #print("Maximum pixel value per channel:", max_per_channel)
+
+                        #max_per_pixel = np.max(image, axis=2)  # Reduce across channels
+                        #print("Max value per pixel across channels:\n", max_per_pixel)
+
+                        #max_position = np.unravel_index(np.argmax(image), image.shape)
+                        #print("Position of the overall maximum pixel value:", max_position)
 
                         # Validate image dimensions
                         if len(image.shape) < 2:
@@ -78,20 +90,33 @@ class ImageDict:
 
                         # Extract ID from the filename
                         id = self.extract_first_number(filename)
+                        if self.isMask:
+                            if id not in imageDict:
+                                print(f"ID not in image_dict: {id}")
+                                continue
+                            
                         if id is not None:
                             if not self.isMask:  # Use the instance variable 'isMask'
                                 # Scale and convert to float32 for non-mask images
                                 image = np.clip(image / 10000.0, 0, 1)
                                 image = image.astype('float32')
+                                #print('aaimage.ndim', image.ndim, image.shape)
+                                if not isAllband:
+                                    image = image[:3, :, :]
+                                    #print('image.ndim', image.ndim, image.shape)
+
+                            if self.isMask:
+                                image = np.array(image)
                             
                             # Assuming GeoTiffMetadata is a defined class to handle metadata
                             metadata = GeoTiffMetadata(src, image)
                             
                             # Add to dictionary based on mask status or filename condition
-                            if self.isMask or 'VNIR' in filename:
+                            if self.isMask or imageType in filename:
+                                #print('input check:', filename)
                                 image_dict[id] = metadata
                                 count += 1
-                            if count == 400:
+                            if count == numberOfimages:
                                 break
       
         except Exception as e:
