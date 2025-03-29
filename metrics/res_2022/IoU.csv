@@ -1,0 +1,8 @@
+Model Configuration,Mean IoU,Std. Dev,Median IoU (50%),25th Percentile,75th Percentile,Fraction IoU > 0.5
+NDV All Bands,0.64,0.24,0.74,0.56,0.81,78.79%
+NDV 3 Bands,0.64,0.24,0.75,0.54,0.81,78.91%
+VNIR All Bands,0.69,0.25,0.79,0.64,0.84,82.81%
+VNIR Augmentation,0.68,0.25,0.79,0.61,0.85,82.03%
+VNIR 3 Bands,0.68,0.25,0.79,0.61,0.85,80.47%
+VNIR Hyperparameter Tuning,0.68,0.25,0.8,0.62,0.85,81.25%
+VNIR  Mixup & Cutmix,0.69,0.26,0.8,0.62,0.85,81.25%

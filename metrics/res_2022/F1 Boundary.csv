@@ -1,0 +1,8 @@
+Model Configuration,Mean F1 Boundary,Std. Dev,Median F1 Boundary (50%),25th Percentile,75th Percentile,Fraction F1 Boundary > 0.7
+NDV All Bands,0.64,0.2,0.73,0.62,0.76,60.61%
+NDV 3 Bands,0.63,0.2,0.73,0.61,0.76,59.38%
+VNIR All Bands,0.65,0.21,0.75,0.64,0.77,67.19%
+VNIR Augmentation,0.63,0.2,0.72,0.61,0.75,61.72%
+VNIR 3 Bands,0.64,0.21,0.74,0.62,0.76,67.19%
+VNIR Hyperparameter Tuning,0.63,0.21,0.73,0.63,0.76,63.28%
+VNIR  Mixup & Cutmix,0.65,0.2,0.74,0.62,0.76,66.41%
