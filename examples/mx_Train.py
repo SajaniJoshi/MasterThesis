@@ -67,9 +67,6 @@ class myTrain:
                 with autograd.record():
                     # Forward pass
                     ListOfPredictions = netTrain.net(batch_img)
-                    pred_segm = mx.nd.sigmoid(ListOfPredictions[0])
-                    pred_bound = mx.nd.sigmoid(ListOfPredictions[1])
-                    pred_dists = mx.nd.sigmoid(ListOfPredictions[2])
                     #[pred_segm, pred_bound,pred_dists]
                     loss = myMTSKL.loss(ListOfPredictions, batch_mask)
 
