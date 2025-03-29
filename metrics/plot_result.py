@@ -59,6 +59,6 @@ def plotResults(input, column, title, output):
         
 def plot_all_results(year):
      path_NDV_all, path_NDV_band3, path_VNIR_all, path_VNIR_aug, path_VNIR_band3, path_VNIR_hp, path_VNIR_mix_cut = get_csv_paths(year)
-     for column, title in [("IOU_VECTOR", "IoU"), ("F1_BOUNDARY", "F1"), ("Shape_Similarity_Index", "Shape Similarity Index")]:
+     for column, title in [("IOU_VECTOR", "IoU"), ("F1_BOUNDARY", "F1"), ("Shape_Similarity_Index_raster", "Shape Similarity Index")]:
         for input in [path_NDV_all, path_NDV_band3, path_VNIR_all, path_VNIR_aug, path_VNIR_band3, path_VNIR_hp, path_VNIR_mix_cut]:
             plotResults(input, column, title, input.replace(".csv", f"_{title}.png"))
