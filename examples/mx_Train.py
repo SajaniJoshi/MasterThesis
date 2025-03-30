@@ -3,7 +3,7 @@ from mxnet import autograd
 from decode.FracTAL_ResUNet.nn.loss.mtsk_loss import mtsk_loss
 from myModel import MyFractalResUNetcmtsk, ReduceLROnPlateau, LossModel
 from tqdm import tqdm
-from mxnet.lr_scheduler import FactorScheduler
+
 
 # Global Training Parameters
 #epochs = 50
@@ -18,9 +18,21 @@ early_stopping_patience = 10  # Early stopping patience
 class myTrain:
     def __init__(self, train_loader, val_loader):
         """
-        Args:
+         Handles the full training loop for FracTAL-ResUNet with multi-task loss.
+
+            - Trains and validates the model over multiple epochs
+            - Uses learning rate scheduler (ReduceLROnPlateau)
+            - Applies early stopping based on validation loss
+            - Tracks loss per epoch and saves model checkpoints
+    
+      Args:
             train_loader (DataLoader): Training DataLoader.
             val_loader (DataLoader): Validation DataLoader.
+
+    Returns:
+        loss_each_epoch (list): Epoch-wise training and validation loss
+        model_list (list): Saved model objects with metadata
+        final_epoch (int): Last completed epoch index
         """
         self.train_loader = train_loader
         self.val_loader = val_loader
@@ -29,9 +41,6 @@ class myTrain:
         mx.nd.waitall()
         # Initialize the network, trainer, scheduler, and loss function
         netTrain = MyFractalResUNetcmtsk(False, "", ctx, nfilters_init=nfilters_init, depth=depth, num_classes=num_classes)
-        #Trainer with dynamic learning rate
-        #lr_scheduler = FactorScheduler(step=10, factor=0.5)  # Reduce LR every 10 epochs
-        #, 'lr_scheduler': lr_scheduler
         trainer = mx.gluon.Trainer(
             netTrain.net.collect_params(), 'adam', 
             {'learning_rate': initial_learning_rate, 'wd': weight_decay}
@@ -92,11 +101,6 @@ class myTrain:
 
                 # Forward pass only
                 ListOfPredictions = netTrain.net(batch_img)
-                # Apply sigmoid activation to validation predictions
-                pred_segm = mx.nd.sigmoid(ListOfPredictions[0])
-                pred_bound = mx.nd.sigmoid(ListOfPredictions[1])
-                pred_dists = mx.nd.sigmoid(ListOfPredictions[2])
-
                 # Compute validation loss
                 #[pred_segm, pred_bound,pred_dists]
                 loss = myMTSKL.loss(ListOfPredictions, batch_mask)
