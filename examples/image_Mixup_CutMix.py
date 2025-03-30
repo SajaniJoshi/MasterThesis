@@ -1,6 +1,37 @@
 import numpy as np
 from mxnet import nd
 
+
+"""
+🧪 MixUp & CutMix Data Augmentation for MXNet
+
+This module provides implementation of two advanced data augmentation techniques:
+**MixUp** and **CutMix**, commonly used to improve model generalization and robustness.
+
+1. mixup_data(data, labels, alpha=1.0)
+   - Blends pairs of input images and labels using a convex combination.
+   - Returns: mixed images, original label pairs (labels_a, labels_b), and blending factor (lam).
+
+2. mixup_loss(loss_fn, pred, labels_a, labels_b, lam)
+   - Computes the combined loss for MixUp by weighting the individual losses from both label sets.
+
+3. cutmix_data(data, labels, alpha=1.0)
+   - Replaces a random patch in each image with a patch from another image in the batch.
+   - Adjusts labels proportionally based on the area of the patch.
+   - Returns: modified data, label pairs, and adjusted lam value.
+
+4. cutmix_loss(loss_fn, pred, labels_a, labels_b, lam)
+   - Computes the combined loss for CutMix using the patch-based blending ratio.
+
+📌 Note:
+- `alpha` controls the Beta distribution for sampling the mixing ratio `lam`.
+- `labels_a` and `labels_b` are used to interpolate ground truths.
+- Designed to work with MXNet NDArrays and training pipelines.
+
+Usage:
+Apply `mixup_data` or `cutmix_data` during batch preprocessing, and use the corresponding loss function in your training loop.
+"""
+
 def mixup_data(data, labels, alpha=1.0):
     print('mixup_data')
     lam = np.random.beta(alpha, alpha) if alpha > 0 else 1.0

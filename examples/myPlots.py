@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 import geopandas as gpd
 import rasterio
 from rasterio.features import shapes
-from shapely.geometry import shape, Polygon, MultiPolygon
+from shapely.geometry import shape
 import pandas as pd
-from PIL import Image
+
 
 def lossPlot(train_losses, loss_path_plot):
     df = pd.DataFrame(train_losses)
@@ -75,8 +75,7 @@ def CreatePly(id,currentMetadata,inst, result_path):
     return output_shapefile_path
      
     
-def visualize_all(id, img, currentMetadata, outputs, pred_segm, pred_bound, inst, result_path): 
-    pred_dists = outputs[2][0,1,:,:].asnumpy() 
+def visualize_all(id, img, currentMetadata, outputs, pred_segm, pred_bound, pred_dists, inst, result_path): 
     output_shapefile_path = CreatePly(id,currentMetadata,inst, result_path)
     writePredictionImage(id, "extend", pred_segm, currentMetadata, output_shapefile_path)
     writePredictionImage(id, "boundary", pred_bound, currentMetadata, output_shapefile_path)

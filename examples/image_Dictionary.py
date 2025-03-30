@@ -7,14 +7,12 @@ from metadata import GeoTiffMetadata
 
 
 class ImageDict:
-    def __init__(self, directory, isMask):
+    def __init__(self, isMask):
         """
         Initialize the ImageDict class.
 
-        :param directory: Path to the directory containing TIFF files
         :param isMask: Boolean indicating if the files are masks
         """
-        self.directory = directory
         self.isMask = isMask
     
     def validate_image(self, filename, image):
@@ -50,7 +48,7 @@ class ImageDict:
             print(f"Error: No match found in '{filename}'")
             return None
 
-    def load_tif_files(self, imageType, imageDict={}, numberOfimages = 10, isAllband= True):
+    def load_tif_files(self, config,  imageDict={}):
         """
         Load TIFF files from the directory into a dictionary keyed by an extracted ID.
 
@@ -59,24 +57,12 @@ class ImageDict:
         image_dict = {}
         try:
             count = 0
-            for filename in os.listdir(self.directory):  # Use the instance variable 'directory'
+            for filename in os.listdir(config.input_directory):  # Use the instance variable 'directory'
                 if filename.endswith(".tif"):
-                    file_path = os.path.join(self.directory, filename)
+                    file_path = os.path.join(config.input_directory, filename)
                     with rasterio.open(file_path) as src:
                         # Read the image as a NumPy array
                         image = src.read()
-                        #print('Image Shape:', image.shape)
-                        #overall_max = np.max(image)
-                        #print("Overall maximum pixel value:", overall_max)
-                        # Max value for each channel
-                        #max_per_channel = np.max(image, axis=(0, 1))  # Reduce across height and width
-                        #print("Maximum pixel value per channel:", max_per_channel)
-
-                        #max_per_pixel = np.max(image, axis=2)  # Reduce across channels
-                        #print("Max value per pixel across channels:\n", max_per_pixel)
-
-                        #max_position = np.unravel_index(np.argmax(image), image.shape)
-                        #print("Position of the overall maximum pixel value:", max_position)
 
                         # Validate image dimensions
                         if len(image.shape) < 2:
@@ -101,7 +87,7 @@ class ImageDict:
                                 image = np.clip(image / 10000.0, 0, 1)
                                 image = image.astype('float32')
                                 #print('aaimage.ndim', image.ndim, image.shape)
-                                if not isAllband:
+                                if not config.isAllband:
                                     image = image[:3, :, :]
                                     #print('image.ndim', image.ndim, image.shape)
 
@@ -112,18 +98,18 @@ class ImageDict:
                             metadata = GeoTiffMetadata(src, image)
                             
                             # Add to dictionary based on mask status or filename condition
-                            if self.isMask or imageType in filename:
+                            if self.isMask or config.imageType in filename:
                                 #print('input check:', filename)
                                 image_dict[id] = metadata
                                 count += 1
-                            if count == numberOfimages:
+                            if count == config.numberOfimages:
                                 break
       
         except Exception as e:
             print(f"Error loading TIFF files: {e}")
         return image_dict
 
-    def getImage(self, id, image_dict, ctx):
+def getImage(id, image_dict, ctx):
         """
         Retrieve an image by ID from the image dictionary.
 
