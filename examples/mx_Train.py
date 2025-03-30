@@ -1,9 +1,12 @@
 import mxnet as mx
+import numpy as np
 from mxnet import autograd
 from decode.FracTAL_ResUNet.nn.loss.mtsk_loss import mtsk_loss
 from myModel import MyFractalResUNetcmtsk, ReduceLROnPlateau, LossModel
 from tqdm import tqdm
 from mxnet.lr_scheduler import FactorScheduler
+from image_Mixup_CutMix import mixup_data, mixup_loss, cutmix_data, cutmix_loss
+
 
 # Global Training Parameters
 #epochs = 50
@@ -63,16 +66,18 @@ class myTrain:
             for batch_img, batch_mask in tqdm(self.train_loader, desc=f"Training Epoch {epoch}"):
                 batch_img = batch_img.as_in_context(ctx)
                 batch_mask = batch_mask.as_in_context(ctx)
-                    
-                with autograd.record():
-                    # Forward pass
-                    ListOfPredictions = netTrain.net(batch_img)
-                    pred_segm = mx.nd.sigmoid(ListOfPredictions[0])
-                    pred_bound = mx.nd.sigmoid(ListOfPredictions[1])
-                    pred_dists = mx.nd.sigmoid(ListOfPredictions[2])
-                    #[pred_segm, pred_bound,pred_dists]
-                    loss = myMTSKL.loss(ListOfPredictions, batch_mask)
 
+                if np.random.rand() < 0.5:
+                    imgs, labels_a, labels_b, lam = mixup_data(batch_img, batch_mask) # Apply Mixup: Mixup interpolates two images and their labels, improving generalization.
+                    with autograd.record():
+                        ListOfPredictions = netTrain.net(imgs) # Forward pass
+                        loss = mixup_loss(myMTSKL.loss, ListOfPredictions, labels_a, labels_b, lam)    
+                else:
+                    imgs, labels_a, labels_b, lam = cutmix_data(batch_img, batch_mask) # Apply Mixup: CutMix replaces a portion of one image with another, forcing the model to focus on multiple parts.
+                    with autograd.record():
+                        ListOfPredictions = netTrain.net(imgs) # Forward pass
+                        loss = cutmix_loss(myMTSKL.loss, ListOfPredictions, labels_a, labels_b, lam) 
+                   
                 loss.backward()  # Backward pass
                 trainer.step(batch_img.shape[0])  # Update parameters (batch size scaling)
 
@@ -84,10 +89,6 @@ class myTrain:
             train_losses.append(current_epoch_loss)
             print(f"Training Loss: {current_epoch_loss}")
 
-            # Validate every 5 epochs
-            #if epoch % 5 == 0 or epoch == epochs - 1:
-
-            # Validation loop
             val_loss = 0.0
             for batch_img, batch_mask in tqdm(self.val_loader, desc=f"Validation Epoch {epoch}"):
                 batch_img = batch_img.as_in_context(ctx)
@@ -95,13 +96,6 @@ class myTrain:
 
                 # Forward pass only
                 ListOfPredictions = netTrain.net(batch_img)
-                # Apply sigmoid activation to validation predictions
-                pred_segm = mx.nd.sigmoid(ListOfPredictions[0])
-                pred_bound = mx.nd.sigmoid(ListOfPredictions[1])
-                pred_dists = mx.nd.sigmoid(ListOfPredictions[2])
-
-                # Compute validation loss
-                #[pred_segm, pred_bound,pred_dists]
                 loss = myMTSKL.loss(ListOfPredictions, batch_mask)
                 val_loss += loss.mean().asscalar()
 
