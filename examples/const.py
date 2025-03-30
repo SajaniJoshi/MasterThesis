@@ -11,6 +11,12 @@ result_2010_3 = r"D:\Source\Output\Result_2010_band3"
 result_2022_aug = r"D:\Source\Output\Result_2022_band_aug1"
 result_2010_aug = r"D:\Source\Output\Result_2010_band_aug1"
 
+result_hp_2022 = r"D:\Source\Output\Result_hp_2022"
+result_hp_2010 = r"D:\Source\Output\Result_hp_2010"
+
+result_mix_cut_2022 = r"D:\Source\Output\Result_mix_cut_2022"
+result_mix_cut_2010 = r"D:\Source\Output\Result_mix_cut_2010"
+
 all_tile_path = r"D:\Source\Input\Data\Tiles\global_tiles_dnn_ls_bb.shp"
 ref_2010 = r"D:\Source\Input\Data\IACS_2010\BB_Antragsdaten_2010_FBS_c1.shp"
 ref_2022 = r"D:\Source\Input\Data\IACS_2022\antrag_land.shp"
