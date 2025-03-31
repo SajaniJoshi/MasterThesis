@@ -1,4 +1,5 @@
 import os
+import const
 from common import saveAsCSV, get_csv_name, get_gt_pred
 from cal_iou import cal_iou_raster_shape, compute_shapefile_iou
 from cal_f1 import cal_f1_boundary, calculate_f1_shp
@@ -24,20 +25,10 @@ def get_results(gt_vector_path, pred_path, mask):
     return results
     
 def save_result_2022():
-    mask_2022 = r"D:\Source\Input\Data\2022\BB\XX_Reference_Masks_ResUNetA"
-    gt_vector_path =r"E:\Master_Chemnitz\Output\IACS_2022"
-    pred_path_vnir_all_2022 = r"E:\Master_Chemnitz\Output\Result_2022\VNIR\648\result"
-    pred_path_ndv_all_2022 = r"E:\Master_Chemnitz\Output\Result_2022\NDV\648\result"
-    pred_path_vnir_band3_2022= r"E:\Master_Chemnitz\Output\Result_2022_band3\VNIR\648\result"
-    pred_path_ndv_band3_2022= r"E:\Master_Chemnitz\Output\Result_2022_band3\NDV\648\result"
-    pred_path_vnir_aug_2022= r"E:\Master_Chemnitz\Output\Result_2022_band_aug\VNIR\648\result"
-    pred_path_vnir_hp_2022= r"E:\Master_Chemnitz\Output\Result_hp_2022\VNIR\648\result"
-    pred_path_vnir_cut_mix_2022= r"E:\Master_Chemnitz\Output\Result_mix_cut_2022\VNIR\648\result"
-
-    for file_2022 in [pred_path_vnir_all_2022,  pred_path_ndv_all_2022, pred_path_vnir_band3_2022,  pred_path_ndv_band3_2022, pred_path_vnir_aug_2022,pred_path_vnir_hp_2022,  pred_path_vnir_cut_mix_2022]:
+    for file_2022 in [const.pred_2022_file,  const.pred_2022_ndv_file, const.pred_2022_vnir_band3_file,  const.pred_2022_ndv_band3_file, const.pred_2022_vnir_aug_file, const.pred_2022_vnir_hp_file, const.pred_2022_vnir_cut_mix_file]:
         csv_name = get_csv_name(file_2022, "Result")
-        path = os.path.join(r"D:\Source\Test\MasterThesis\metrics\res_2022", csv_name)
-        results = get_results(gt_vector_path, file_2022, mask_2022)
+        path = os.path.join(const.result_path_2022, csv_name)
+        results = get_results(const.gt_vector_path, file_2022, const.mask_2022)
         saveAsCSV(["ID", "IOU_RASTER", "IOU_VECTOR", "F1_BOUNDARY", "Shape_Similarity_Index_raster", "Shape_Similarity_Index_vector"], path, results)
         
 
@@ -57,18 +48,10 @@ def get_results_2010( gt_vector_path_2010, file_2010):
     return results 
 
 def save_result_2010():
-    pred_2010_file = r"E:\Master_Chemnitz\Output\Result_2010\VNIR"
-    pred_2010_ndv_file = r"E:\Master_Chemnitz\Output\Result_2010\NDV"
-    pred_2010_vnir_band3_file = r"E:\Master_Chemnitz\Output\Result_2010_band3\VNIR"
-    pred_2010_ndv_band3_file = r"E:\Master_Chemnitz\Output\Result_2010_band3\NDV"
-    pred_2010_vnir_aug_file = r"E:\Master_Chemnitz\Output\Result_2010_band_aug\VNIR"
-    pred_2010_vnir_hp_file = r"E:\Master_Chemnitz\Output\Result_hp_2010\VNIR"
-    pred_2010_vnir_mix_cut_file = r"E:\Master_Chemnitz\Output\Result_mix_cut_2010\VNIR"
-    gt_vector_path_2010 =r"E:\Master_Chemnitz\Output\IACS_2010"
-    for file_2010 in [pred_2010_file, pred_2010_ndv_file, pred_2010_vnir_band3_file, pred_2010_ndv_band3_file, pred_2010_vnir_aug_file, pred_2010_vnir_hp_file, pred_2010_vnir_mix_cut_file]:
+    for file_2010 in [const.pred_2010_file, const.pred_2010_ndv_file, const.pred_2010_vnir_band3_file, const.pred_2010_ndv_band3_file, const.pred_2010_vnir_aug_file, const.pred_2010_vnir_hp_file, const.pred_2010_vnir_mix_cut_file]:
         csv_name = get_csv_name(file_2010, "Result")
-        path = os.path.join(r"D:\Source\Test\MasterThesis\metrics\res_2010", csv_name)
-        results = get_results_2010(gt_vector_path_2010, file_2010)
+        path = os.path.join(const.result_path_2010, csv_name)
+        results = get_results_2010(const.gt_vector_path_2010, file_2010)
         saveAsCSV(["ID", "IOU_VECTOR", "F1_BOUNDARY", "Shape_Similarity_Index"], path, results)
 
         

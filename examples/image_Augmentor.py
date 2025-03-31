@@ -6,6 +6,16 @@ from mxnet.gluon.data import Dataset
 
 # Augmentor class
 class SatelliteImageAugmentor:
+    """
+    A data augmentation class for satellite imagery and masks.
+
+    Supports:
+    - Random horizontal and vertical flips
+    - Random 90°, 180°, or 270° rotations
+    - Gaussian noise addition to the image
+
+    These augmentations improve model robustness and generalization.
+    """
     def __init__(self, flip_prob=0.5, rotate_prob=0.5, noise_prob=0.3):
         self.flip_prob = flip_prob
         self.rotate_prob = rotate_prob
