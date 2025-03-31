@@ -32,19 +32,23 @@ class ExperimentConfig:
         if self.year == 2022:
             self.output_dir=const.result_2022
             self.output_ref =const.output_ref_2022
+            self.lossFile = os.path.join(self.output_dir,f"LOSS_{self.image_type}_2022.csv")
             if not all_bands:
                 self.output_dir = const.result_2022_3
+                self.lossFile = os.path.join(self.output_dir,f"LOSS_{self.image_type}_3_2022.csv")
             if use_augmentation:
                 self.output_dir = const.result_2022_aug
+                self.lossFile = os.path.join(self.output_dir,f"LOSS_{self.image_type}_AUG_2022.csv")
             if use_hyperparameter_tuning:
                 self.output_dir = const.result_hp_2022
+                self.lossFile = os.path.join(self.output_dir,f"LOSS_{self.image_type}_Hypertuning_2022.csv")
             if use_mixup_cutmix:
                 self.output_dir = const.result_mix_cut_2022
+                self.lossFile = os.path.join(self.output_dir,f"LOSS_{self.image_type}_mixup_cutmix_2022.csv")
             
             self.output_dir= os.path.join(const.output_dir, self.imageType, str(numberOfimages))
             self.output_models= os.path.join(self.output_dir,"models")
-            self.lossFile = os.path.join(self.output_dir,"loss.csv")
-            
+          
         if self.year == 2010:
             self.output_dir=const.result_2010
             self.output_ref =const.output_ref_2010
