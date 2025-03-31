@@ -57,8 +57,9 @@ This project relies on a specific Python environment managed with Anaconda. Belo
   - Set the path of CUDA in Environment Variables
 
 Clone the repository:
-git clone https://github.com/waldnerf/decode.git
-git clone https://github.com/SajaniJoshi/MasterThesis.git
+
+- git clone https://github.com/waldnerf/decode.git
+- git clone https://github.com/SajaniJoshi/MasterThesis.git
 
 Install required Python packages using Anaconda:
 
