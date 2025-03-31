@@ -1,7 +1,5 @@
 # Temporal transferability of deep learning models for segmenting agricultural fields from satellite images
 
-# Agricultural Field Boundary Detection Using Satellite Imagery
-
 This project focuses on using deep learning models to segment agricultural field boundaries in the Brandenburg area from satellite imagery. The study utilizes historical and recent data to assess model effectiveness and transferability over time.
 
 ## Study Area
@@ -36,7 +34,7 @@ This approach not only improved our model's accuracy in segmenting field boundar
 
 ### Validation of Historical Data
 
-Using the DECODE methodology, we performed extensive validations on the outputs generated from the 2010 imagery. The comparison with the 2022 data allowed us to measure the temporal shift in agricultural practices and land use change effectively. This validation process utilized metrics such as IoU, Boundary F1-score, Shape smilarity index, ensuring that our model predictions align accurately with historical changes observed in the satellite images.
+we performed extensive validations on the outputs generated from the 2010 imagery. The comparison with the 2022 data allowed us to measure the temporal shift in agricultural practices and land use change effectively. This validation process utilized metrics such as IoU, Boundary F1-score, Shape smilarity index, ensuring that our model predictions align accurately with historical changes observed in the satellite images.
 
 ## Getting Started
 
@@ -48,20 +46,102 @@ This project relies on a specific Python environment managed with Anaconda. Belo
 - Python 3.6+
 - MXNet
 - QGIS
+- CUDA Toolkit 11.1
 
 ### Installing
 
+- Install [ANACONDA](https://www.anaconda.com/download)
+- Install [QGIS](https://qgis.org/)
+- If you are using GPU
+  - Install [CUDA Toolkit 11.1](https://developer.nvidia.com/cuda-11.1.1-download-archive)
+  - Set the path of CUDA in Environment Variables
+
 Clone the repository:
+git clone https://github.com/waldnerf/decode.git
 git clone https://github.com/SajaniJoshi/MasterThesis.git
 
-Install required Python packages:
-pip install -r requirements.txt
+Install required Python packages using Anaconda:
 
-## Running the tests
+- Create a new environment with python version 3.6.13
+- In this new enviorment
+  - Install Mxnet GPU or Mxnet 1.2.1
+  - Install numpy, pandas, geopandas, matplotlib, pillow, pyproj, rasterio, Shapely, tqdm
 
-To run tests, use the following command:
+## Running the Tests
 
-- TODO
+To run the tests, follow these steps:
+
+1. **Set Input Paths**  
+   Update the image and mask input paths in `const.py` located at `examples/const.py`.
+
+2. **Open the Notebook**  
+   Launch `myDecode.ipynb` located in `examples/myDecode.ipynb`.
+
+3. **Select Environment**  
+   Change the kernel and select the newly created environment.
+
+4. **Configure the Experiment**  
+   Initialize `ExperimentConfig` with your desired settings.  
+   For example, to apply image augmentation, set `use_augmentation = True`.
+
+5. **Run Cells Sequentially**  
+   Execute each cell in order to start the experiment.
+
+6. **Training Outputs**
+
+   - Model checkpoints are saved after each epoch.
+   - Training and validation losses are saved a CSV files.
+
+7. **Validation Outputs 2022 and 2010**
+
+- Predicted images such as Extent, Boundary, Distance, Instant segmented images are saved in Tiff format and one additon vector shape file are created for each tile.
+
+## Running the Validation Metrics
+
+To evaluate the validation metrics, follow these steps:
+
+1. **Set Paths**  
+   Update the correct paths in [`const.py`](metrics/const.py).
+
+2. **Run the Notebook**  
+   Open and run each cell in [`metrics_result.ipynb`](metrics/metrics_result.ipynb) sequentially.
+
+3. **Metrics Computation**  
+   The following metrics are calculated:
+
+   - Intersection over Union (IoU)
+   - F1 Boundary Score
+   - Shape Similarity
+   - Temporal Boundary Shift
+
+4. **Results**  
+   The computed metrics are saved as CSV and Histrogram as PNG files in the following directories:
+   - `metrics/res_2022`
+   - `metrics/res_2010`
+
+## Visualizing and Comparing Results
+
+To visualize and compare the results, follow these steps:
+
+1. **Set Paths**  
+   Update the required paths in [`const.py`](visualize/const.py).
+
+2. **Run the Notebook**  
+   Open and execute each cell in [`visualize.ipynb`](visualize/visualize.ipynb).
+
+3. **Output**  
+   The notebook will generate comparison images that include:
+
+   - Original Image
+   - Mask
+   - Extent
+   - Boundary
+   - Distance
+   - Instance Segmented Image
+   - Agreement
+
+   All components are displayed side by side to facilitate easy comparison for both the 2022 and 2010 datasets.  
+   The generated images will be saved in the `visualize/result_img` directory.
 
 ## Built With
 
@@ -76,7 +156,6 @@ To run tests, use the following command:
 ## License
 
 - TODO how do i get the license
-  This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
 ## Acknowledgments
 
@@ -85,7 +164,7 @@ To run tests, use the following command:
 
 ## References
 
-- Brandenburg Data Source [[WikipediaBrandenburg](https://de.wikipedia.org/wiki/Brandenburg)]
-- Agricultural Practices [MLEUVPublications]
-- Model Comparison Study [https://link.springer.com/article/10.1007/s41064-023-00247-x]
-- DECODE Method for Transferability [https://www.mdpi.com/2072-4292/13/11/2197]
+- [Brandenburg Data Source](https://de.wikipedia.org/wiki/Brandenburg)
+- [Agricultural Practices](https://mleuv.brandenburg.de/mleuv/en/about-us/public-relations/publications/)
+- [Model Comparison Study](https://link.springer.com/article/10.1007/s41064-023-00247-x)
+- [DECODE](https://www.mdpi.com/2072-4292/13/11/2197) Method for Transferability
