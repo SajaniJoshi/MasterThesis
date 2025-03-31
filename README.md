@@ -160,7 +160,7 @@ To visualize and compare the results, follow these steps:
 ## Acknowledgments
 
 - Thanks to the Brandenburg data providers.
-- Acknowledgment to research team members and advisors.
+- Acknowledgment to Dr. Michael Teichmann, Prof. Dr. habil. Julien Vitay (Technische Universität Chemnitz), and Dr. Gideon Okpoti Tetteh (Thünen Institute) for their exceptional guidance, feedback, and support.
 
 ## References
 
