@@ -1,7 +1,6 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap
 from common import  get_ori_perd_2022_2010
 
 def plot_images_with_masks_com(idsList, name, ncols):
