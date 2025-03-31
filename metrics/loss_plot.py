@@ -1,6 +1,8 @@
-import matplotlib.pyplot as plt
+import os
 import pandas as pd
-import numpy as np
+import matplotlib.pyplot as plt
+import const
+
 
 # Define the consistent axis limits
 training_loss_max = 0.5585567473899573  # highest max training loss
@@ -12,17 +14,7 @@ validation_loss_min = 0.454997194930911  # lowest min validation loss
 y_min = min(training_loss_min, validation_loss_min)
 y_max = max(training_loss_max, validation_loss_max)
 
-# List of file paths
-file_paths = [
-    r'D:\Source\Test\MasterThesis\metrics\res_2022\Loss\LOSS_VNIR_2022.csv',
-    r'D:\Source\Test\MasterThesis\metrics\res_2022\Loss\LOSS_VNIR_3_2022.csv',
-    r'D:\Source\Test\MasterThesis\metrics\res_2022\Loss\LOSS_VNIR_AUG_2022.csv',
-    r'D:\Source\Test\MasterThesis\metrics\res_2022\Loss\LOSS_VNIR_Hypertuning_2022.csv',
-    r'D:\Source\Test\MasterThesis\metrics\res_2022\Loss\LOSS_VNIR_mixup_cutmix_2022.csv',
-    r'D:\Source\Test\MasterThesis\metrics\res_2022\Loss\LOSS_NDV_2022.csv',
-    r'D:\Source\Test\MasterThesis\metrics\res_2022\Loss\LOSS_NDV_3_2022.csv',
-    r'D:\Source\Test\MasterThesis\metrics\res_2022\Loss\LOSS_NDV_AUG_2022.csv'
-]
+
 
 def getType(input):
     method = "using all bands"
@@ -50,7 +42,7 @@ def plot_all_loss():
     axes = axes.flatten()  # Flatten the array to make indexing easier
 
     # Iterate through file paths and plot data
-    for i, file_path in enumerate(file_paths):
+    for i, file_path in enumerate(const.file_paths):
         # Read CSV file
         data = pd.read_csv(file_path)
         method, color, type, year, output = getType(file_path)
@@ -80,5 +72,6 @@ def plot_all_loss():
     labels = ['Training Loss', 'Validation Loss']
     patches = [plt.matplotlib.patches.Patch(color=color, label=label) for color, label in zip(colors, labels)]
     fig.legend(handles=patches, loc='lower center', ncol=2, bbox_to_anchor=(0.5, -0.02), fontsize=12)
-    plt.savefig(os.path.join(r"D:\Source\Test\MasterThesis\metrics\res_2022\img_2022", "all_loss2.png"), format='png', dpi=300)
+    savePath =os.path.join(const.result_path_2022,"img_2022", "all_loss2.png")
+    plt.savefig(savePath, format='png', dpi=300)
     plt.show()

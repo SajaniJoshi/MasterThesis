@@ -2,6 +2,7 @@ import os
 import pandas as pd
 from IPython.display import display
 from common import get_csv_paths, get_tbs_path
+import const
 
 def get_csv(year):
     path_NDV_all, path_NDV_band3, path_VNIR_all, path_VNIR_aug, path_VNIR_band3, path_VNIR_hp, path_VNIR_mix_cut = get_csv_paths(year)
@@ -51,7 +52,7 @@ def display_summary_v1(csv_NDV_all, csv_NDV_band3, csv_VNIR_all, csv_VNIR_aug, c
         summary_tables.append(summary_table)
 
     summary_df = pd.DataFrame(summary_tables)
-    save_path = os.path.join(rf"D:\Source\Test\MasterThesis\metrics\res_2010", f"{title}.csv")
+    save_path = os.path.join(const.result_path_2010, f"{title}.csv")
     print(save_path)
     summary_df.to_csv(save_path, index=False)
     print(summary_df)
@@ -67,7 +68,7 @@ def display_iou_f1_ssi(year):
         display_summary(csv_NDV_all, csv_NDV_band3, csv_VNIR_all, csv_VNIR_aug, csv_VNIR_band3, csv_VNIR_hp, csv_VNIR_mix_cut, key, title, year)
         
 def display_tbs():
-    mainPath =r"D:\Source\Test\MasterThesis\metrics\res_2010"
+    mainPath = const.result_path_2010
     path_NDV_all, path_NDV_band3, path_VNIR_all, path_VNIR_aug, path_VNIR_band3, path_VNIR_hp, path_VNIR_mix_cut= get_tbs_path(mainPath, "2010")
     csv_NDV_all= pd.read_csv(path_NDV_all)
     csv_NDV_band3= pd.read_csv(path_NDV_band3)

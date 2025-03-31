@@ -2,6 +2,7 @@ import os
 import numpy as np
 from skimage import measure
 from scipy.spatial.distance import directed_hausdorff
+import const
 from common import load_raster_mask, saveAsCSV, get_csv_name
 
 def extract_boundary(mask):
@@ -47,36 +48,15 @@ def compute_temporal_boundary_shift(pred_2010_file, pred_2022_file):
 
       
 def compute_temporal_boundary_shifts():
-    pred_2022_file = r"E:\Master_Chemnitz\Output\Result_2022\VNIR\648\result"
-    pred_2010_file = r"E:\Master_Chemnitz\Output\Result_2010\VNIR"
-
-    pred_2022_ndv_file = r"E:\Master_Chemnitz\Output\Result_2022\NDV\648\result"
-    pred_2010_ndv_file = r"E:\Master_Chemnitz\Output\Result_2010\NDV"
-
-    pred_2022_vnir_band3_file = r"E:\Master_Chemnitz\Output\Result_2022_band3\VNIR\648\result"
-    pred_2010_vnir_band3_file = r"E:\Master_Chemnitz\Output\Result_2010_band3\VNIR"
-
-    pred_2022_ndv_band3_file = r"E:\Master_Chemnitz\Output\Result_2022_band3\NDV\648\result"
-    pred_2010_ndv_band3_file = r"E:\Master_Chemnitz\Output\Result_2010_band3\NDV"
-
-    pred_2022_vnir_aug_file = r"E:\Master_Chemnitz\Output\Result_2022_band_aug\VNIR\648\result"
-    pred_2010_vnir_aug_file = r"E:\Master_Chemnitz\Output\Result_2010_band_aug\VNIR"
-
-    pred_2022_vnir_hp_file = r"E:\Master_Chemnitz\Output\Result_hp_2022\VNIR\648\result"
-    pred_2010_vnir_hp_file = r"E:\Master_Chemnitz\Output\Result_hp_2010\VNIR"
-
-    pred_2022_vnir_mix_cut_file = r"E:\Master_Chemnitz\Output\Result_mix_cut_2022\VNIR\648\result"
-    pred_2010_vnir_mix_cut_file = r"E:\Master_Chemnitz\Output\Result_mix_cut_2010\VNIR"
-
-    pred_2010_2022 =[(pred_2010_file, pred_2022_file),
-                 (pred_2010_ndv_file, pred_2022_ndv_file), (pred_2010_vnir_band3_file, pred_2022_vnir_band3_file),
-                 (pred_2010_ndv_band3_file, pred_2022_ndv_band3_file),(pred_2010_vnir_aug_file, pred_2022_vnir_aug_file),
-                 (pred_2010_vnir_hp_file, pred_2022_vnir_hp_file), (pred_2010_vnir_mix_cut_file, pred_2022_vnir_mix_cut_file)
+    pred_2010_2022 =[(const.pred_2010_file, const.pred_2022_file),
+                 (const.pred_2010_ndv_file, const.pred_2022_ndv_file), (const.pred_2010_vnir_band3_file, const.pred_2022_vnir_band3_file),
+                 (const.pred_2010_ndv_band3_file, const.pred_2022_ndv_band3_file),(const.pred_2010_vnir_aug_file, const.pred_2022_vnir_aug_file),
+                 (const.pred_2010_vnir_hp_file, const.pred_2022_vnir_hp_file), (const.pred_2010_vnir_mix_cut_file, const.pred_2022_vnir_mix_cut_file)
                  ]
     for pred2010, pred2022 in pred_2010_2022: #[(pred_2010_file, pred_2022_file)]:
         tbs_result = compute_temporal_boundary_shift(pred2010, pred2022)
         csv_name = get_csv_name(pred2010, 'tbs')
-        outputPath = os.path.join(r"D:\Source\Test\MasterThesis\metrics\res_2010", csv_name)
+        outputPath = os.path.join(const.result_path_2010, csv_name)
         saveAsCSV(["ID","TEMPORAL_BOUNDARY_SHIFT"], outputPath, tbs_result)
 
     
