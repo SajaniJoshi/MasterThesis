@@ -1,10 +1,10 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+import const
 from common import  get_ori_perd_2022_2010
 
 def plot_images_with_masks_com(idsList, name, ncols):
-    results_path = rf"D:\Source\Test\MasterThesis\visualize\{name}"
     images = get_ori_perd_2022_2010(idsList)
     num_images = len(images)
     if num_images == 0:
@@ -54,5 +54,6 @@ def plot_images_with_masks_com(idsList, name, ncols):
 
     plt.tight_layout()  # Adjust padding as needed
     plt.subplots_adjust(top=0.95, bottom=-0.4,  hspace=0.1)  # Adjust bottom to fit the legend if needed
+    results_path =  os.path.join(const.result_path_2022, name)
     plt.savefig(results_path, dpi=300, bbox_inches='tight')
     plt.show()

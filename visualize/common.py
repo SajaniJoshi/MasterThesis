@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import rasterio
+import const
 
 def validate_image(filename, image):
     if image is None or image.size == 0:
@@ -76,7 +77,7 @@ def get_ori_pred_img(id, oriPath, maskPath, predPath, is2022):
     if not is2022:
         year = 2010
         maskImg = None
-    oriImg = os.path.join(oriPath, f"{id}_LS_{year}_{year}_VNIR.tif")
+    oriImg = os.path.join(oriPath, f"{id}_LS_{year}_VNIR.tif")
     extImg = os.path.join(predPath, id, f"{id}_extend.tif")
     boundaryImg =os.path.join(predPath, id, f"{id}_boundary.tif")
     distImg = os.path.join(predPath, id, f"{id}_distance.tif")
@@ -85,27 +86,21 @@ def get_ori_pred_img(id, oriPath, maskPath, predPath, is2022):
 
 
 def get_ori_pred(idsList, is2022):
-    oriPath = rf"D:\Source\Input\Data\2022\BB\08X_Features_Multi"
-    maskPath = r"D:\Source\Input\Data\2022\BB\XX_Reference_Masks_ResUNetA"
-    predPath = r"E:\Master_Chemnitz\Output\Result_mix_cut_2022\VNIR\648\result"
+    oriPath = const.oriPath_2022
+    predPath = const.predPath_2022
     if not is2022:
-        oriPath = r"D:\Source\Input\Data\2010\BB\08X_Features_Multi"
-        predPath = r"E:\Master_Chemnitz\Output\Result_2010\VNIR"
+        oriPath = const.oriPath_2010
+        predPath =const.predPath_2010
     results = []
     for id in idsList:
-         results.append(get_ori_pred_img(id,oriPath, maskPath, predPath, is2022))
+         results.append(get_ori_pred_img(id,oriPath, const.maskPath, predPath, is2022))
     return results
 
 def get_ori_perd_2022_2010(idsList):
     results = []
     for id in idsList:
-        oriPath = rf"D:\Source\Input\Data\2022\BB\08X_Features_Multi"
-        maskPath = r"D:\Source\Input\Data\2022\BB\XX_Reference_Masks_ResUNetA"
-        predPath = r"E:\Master_Chemnitz\Output\Result_mix_cut_2022\VNIR\648\result"
-        oriPath_2010 = r"D:\Source\Input\Data\2010\BB\08X_Features_Multi"
-        predPath_2010 = r"E:\Master_Chemnitz\Output\Result_mix_cut_2010\VNIR"
-        results.append(get_ori_pred_img(id,oriPath, maskPath, predPath, True))
-        results.append(get_ori_pred_img(id,oriPath_2010, "", predPath_2010, False))
+        results.append(get_ori_pred_img(id,const.oriPath_2022, const.maskPath, const.predPath_2022, True))
+        results.append(get_ori_pred_img(id,const.oriPath_2010, "", const.predPath_2010, False))
     return results
     
         
