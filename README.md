@@ -156,7 +156,7 @@ To visualize and compare the results, follow these steps:
 
 ## License
 
-- TODO how do i get the license
+- CC BY-NC-ND 4.0 — Free to view and share, but not modify or use commercially.
 
 ## Acknowledgments
 
